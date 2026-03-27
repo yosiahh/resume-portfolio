@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOSIAH | DOSSIER_v1.6.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;700&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --gold: #C9A84C;
+            --gold-glow: rgba(201, 168, 76, 0.3);
+            --bg: #080C10;
+            --surface: rgba(13, 17, 23, 0.95);
+            --text: #E8E0D0;
+            --text-dim: #888070;
+            --bounty-red: #FF4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background: var(--bg); color: var(--text); 
+            font-family: 'JetBrains Mono', monospace; overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(201, 168, 76, 0.08) 1px, transparent 0),
+                linear-gradient(rgba(201, 168, 76, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201, 168, 76, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px, 120px 120px, 120px 120px;
+        }
+
+        @keyframes glitch-shake {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 2px); filter: hue-rotate(90deg); }
+            40% { transform: translate(-3px, -2px); }
+            60% { transform: translate(3px, 2px); filter: hue-rotate(-90deg); }
+            100% { transform: translate(0); }
+        }
+        .glitch-flash { animation: glitch-shake 0.25s ease-in-out; filter: brightness(1.4); }
+
+        .hire-particle {
+            position: fixed; pointer-events: none; color: var(--gold);
+            font-family: 'Unbounded'; font-weight: bold; font-size: 0.7rem;
+            z-index: 30000; text-shadow: 0 0 10px var(--gold-glow); white-space: nowrap;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
+        h1, h2, h3 { font-family: 'Unbounded', sans-serif; text-transform: uppercase; }
+
+        #splash-screen {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center, #161B22 0%, #080C10 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; transition: 0.6s ease-in-out;
+        }
+        .menu-title { font-size: clamp(1.2rem, 7vw, 2.5rem); color: var(--gold); letter-spacing: 8px; margin-bottom: 40px; text-shadow: 0 0 15px var(--gold-glow); text-align: center; }
+        .menu-options { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; padding: 0 20px; }
+        .menu-btn { background: rgba(0,0,0,0.5); border: 1px solid rgba(201, 168, 76, 0.2); color: var(--text); padding: 18px; font-family: 'Rajdhani'; cursor: pointer; text-align: left; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        .menu-btn:hover { background: var(--gold); color: #000; padding-left: 30px; }
+
+        #main-content { display: none; padding: 20px; max-width: 1400px; margin: 0 auto; min-height: 100vh; }
+        .header { border-bottom: 2px solid var(--gold); padding-bottom: 20px; margin-bottom: 30px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; }
+        .header h1 { font-size: clamp(1.4rem, 4vw, 2rem); color: var(--gold); }
+        
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 20px; padding-bottom: 100px; }
+
+        .card { background: var(--surface); border: 1px solid rgba(201, 168, 76, 0.1); padding: 20px; border-top: 3px solid var(--gold); backdrop-filter: blur(10px); transition: 0.3s; cursor: pointer; position: relative; }
+        .card:hover { border-color: var(--gold); box-shadow: 0 0 15px var(--gold-glow); transform: translateY(-2px); }
+        .card h2 { font-size: 0.75rem; margin-bottom: 15px; color: var(--gold); letter-spacing: 1px; }
+
+        #detail-overlay {
+            position: fixed; inset: 0; background: rgba(8, 12, 16, 0.98); backdrop-filter: blur(15px);
+            z-index: 10000; display: none; justify-content: center; align-items: center; padding: 40px;
+        }
+        .overlay-content { width: 100%; max-width: 1100px; position: relative; animation: zoomIn 0.3s ease-out; }
+        @keyframes zoomIn { from { opacity: 0; scale: 0.95; } to { opacity: 1; scale: 1; } }
+        .overlay-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; }
+        @media (max-width: 850px) { .overlay-grid { grid-template-columns: 1fr; } }
+
+        .detail-pane { background: rgba(201, 168, 76, 0.03); border: 1px solid rgba(201, 168, 76, 0.1); padding: 30px; border-left: 4px solid var(--gold); }
+        .detail-body { font-size: 0.85rem; line-height: 1.7; color: var(--text-dim); margin-top: 20px; }
+        .detail-body strong { color: var(--gold); }
+        .close-btn { position: absolute; top: -50px; right: 0; background: transparent; border: none; color: var(--gold); font-family: 'Rajdhani'; cursor: pointer; font-size: 1.2rem; }
+
+        .arsenal-item { display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid rgba(201, 168, 76, 0.05); }
+        .weapon-name { font-family: 'Unbounded'; font-size: 0.6rem; color: var(--gold); width: 100px; }
+        .weapon-bar { flex-grow: 1; height: 4px; background: rgba(255,255,255,0.05); position: relative; }
+        .weapon-fill { position: absolute; height: 100%; background: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+        .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.7rem; }
+        .data-val { color: var(--gold); font-weight: bold; }
+        
+        .tactical-hud { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-around; padding: 10px; background: rgba(8, 12, 16, 0.95); font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--gold); border-top: 1px solid var(--gold-glow); z-index: 10; }
+        .bounty-amount { color: var(--bounty-red); font-weight: 900; animation: pulse 2s infinite; cursor: pointer; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .fade-out { opacity: 0; pointer-events: none; }
+        /* SCANLINE OVERLAY: Place this to create the CRT monitor effect */
+#splash-screen::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 10001;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+}
+
+/* FLICKER ANIMATION: Apply this to the "FILE_FOUND" text */
+.menu-title {
+    animation: textFlicker 3s linear infinite;
+}
+
+@keyframes textFlicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; text-shadow: 0 0 15px var(--gold-glow); }
+    20%, 24%, 55% { opacity: 0.3; text-shadow: none; }
+}
+
+/* DECRYPTING HOVER: This creates the sliding gold bar effect on buttons */
+.menu-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-btn::after {
+    content: "DECRYPTING...";
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--gold);
+    color: #000;
+    display: flex;
+    align-items: center;
+    padding-left: 18px;
+    transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    font-weight: 800;
+}
+
+.menu-btn:hover::after {
+    left: 0;
+}
+    </style>
+</head>
+<body>
+
+   <div id="splash-screen">
+    <div class="menu-title">FILE_FOUND</div> 
+    <div class="menu-options">
+        <button class="menu-btn" onclick="enterArchive()">[ ACCESS_FILES ]</button>
+        <button class="menu-btn" onclick="window.open('https://github.com/yosiahh', '_blank')">[ REPOSITORY ]</button>
+        <button class="menu-btn" onclick="handleResume()">[ PERSONNEL_DATA ]</button>
+    </div>
+</div>
+    <div id="main-content">
+        <header class="header">
+            <div>
+                <h1 id="typewriter"></h1>
+                <p style="font-size: 0.6rem; color: var(--gold); font-weight: bold;">NODE: JOSIAH_SYSTEM_v1.6.0</p>
+            </div>
+            <div style="text-align: right; font-family: 'Rajdhani';" onclick="spawnHireMe(event)">
+                <p style="font-size: 0.55rem; color: var(--text-dim); letter-spacing: 1px; cursor: pointer;">WANTED // DEAD OR HIRED</p>
+                <p class="bounty-amount" style="font-size: clamp(0.9rem, 3vw, 1.2rem);">฿30,000,000—</p>
+            </div>
+        </header>
+
+        <div class="grid-container">
+            <section class="card" onclick="openDetail('CORE_PROFILE', this)">
+                <h2>// CORE_PROFILE</h2>
+                <div class="data-row"><span>DESIGNATION</span><span class="data-val">JOSIAH_ASA_ANOTA</span></div>
+                <div class="data-row"><span>AGE</span><span class="data-val">25_YEARS</span></div>
+                <div class="data-row"><span>LOCATION</span><span class="data-val">PITOGO_TAGUIG</span></div>
+                <div class="data-row"><span>SPECIALIZATION</span><span class="data-val">CYBER_OPS</span></div>
+            </section>
+
+            <section class="card" onclick="openDetail('TECH_ARSENAL', this)">
+                <h2>// TECH_ARSENAL</h2>
+                <div class="arsenal-item"><span class="weapon-name">KALI_LINUX</span><div class="weapon-bar"><div class="weapon-fill" style="width: 82%;"></div></div></div>
+                <div class="arsenal-item"><span class="weapon-name">NMAP_SCAN</span><div class="weapon-bar"><div class="weapon-fill" style="width: 78%;"></div></div></div>
+                <div class="arsenal-item"><span class="weapon-name">VIRTUALBOX</span><div class="weapon-bar"><div class="weapon-fill" style="width: 85%;"></div></div></div>
+                <div class="arsenal-item"><span class="weapon-name">C++ / JS</span><div class="weapon-bar"><div class="weapon-fill" style="width: 80%;"></div></div></div>
+                <div class="arsenal-item"><span class="weapon-name">MS_OFFICE</span><div class="weapon-bar"><div class="weapon-fill" style="width: 95%;"></div></div></div>
+            </section>
+
+            <section class="card" onclick="openDetail('PROJECT_DEV', this)">
+                <h2>// PROJECT_DEV</h2>
+                <div style="border-left: 3px solid var(--gold); padding: 10px; background: rgba(201,168,76,0.05); margin-bottom: 12px;">
+                    <h3 style="font-size: 0.7rem; color: var(--gold);">HUNTER_LOG_POSE</h3>
+                    <p style="font-size: 0.55rem; color: var(--text-dim);">Fitness gamification with Bounty/XP mechanics.</p>
+                </div>
+                <div style="border-left: 2px solid var(--text-dim); padding: 10px; margin-bottom: 12px;">
+                    <h3 style="font-size: 0.7rem;">COMPOSED_CONQUEST</h3>
+                    <p style="font-size: 0.55rem; color: var(--text-dim);">Strategy for self-discipline mindset resources.</p>
+                </div>
+                <div style="border-left: 2px solid var(--text-dim); padding: 10px;">
+                    <h3 style="font-size: 0.7rem;">AMAZON_AFFILIATE</h3>
+                    <p style="font-size: 0.55rem; color: var(--text-dim);">Automated link distribution infrastructure.</p>
+                </div>
+            </section>
+
+            <section class="card" onclick="openDetail('FIELD_OPS', this)">
+                <h2>// FIELD_OPS</h2>
+                <div class="data-row"><span>FOUNDEVER</span><span class="data-val">TSR_2025</span></div>
+                <div class="data-row"><span>CONCENTRIX</span><span class="data-val">ADVISOR</span></div>
+                <div class="data-row"><span>GIFT_CHR</span><span class="data-val">ADMIN_COORD</span></div>
+                <p style="font-size: 0.55rem; color: var(--text-dim); margin-top: 10px;">* 100% resolution approval rating verified.</p>
+            </section>
+
+            <section class="card" onclick="openDetail('MILESTONES', this)">
+                <h2>// MILESTONES</h2>
+                <div class="data-row"><span>UMAK_BSCS</span><span class="data-val">APP_DEV_MAJ</span></div>
+                <div class="data-row"><span>IBM_CERT</span><span class="data-val">CYBER_FUND</span></div>
+                <div class="data-row"><span>TESDA_NCIII</span><span class="data-val">APRIL_2026</span></div>
+                <div class="data-row"><span>TARGET_2030</span><span class="data-val">NAT_SECURITY</span></div>
+            </section>
+
+            <section class="card" onclick="openDetail('MARKET_MONITOR', this)">
+                <h2>// MARKET_MONITOR</h2>
+                <div class="data-row"><span>OP_CARD_TCG</span><span class="data-val">PRB-02/OP-14</span></div>
+                <div class="data-row"><span>90s_NBA_MJ</span><span class="data-val">RARITY_WATCH</span></div>
+                <div class="data-row"><span>HOBBY_LAB</span><span class="data-val">AIRFRY_BAKING</span></div>
+                <p style="font-size: 0.55rem; color: var(--text-dim); margin-top: 10px;">* Active tracking of card market fluctuations.</p>
+            </section>
+
+            <section class="card" onclick="openDetail('PHYS_COND', this)">
+                <h2>// PHYS_COND</h2>
+                <div class="data-row"><span>ENDURANCE</span><span class="data-val">RUNNING_VOL</span></div>
+                <div class="data-row"><span>STRENGTH</span><span class="data-val">FUNCTIONAL</span></div>
+                <div class="data-row"><span>OBJECTIVE</span><span class="data-val">FORCE_FITNESS</span></div>
+                <p style="font-size: 0.55rem; color: var(--text-dim); margin-top: 10px;">Preparing for national security professional entry.</p>
+            </section>
+
+            <section class="card" onclick="openDetail('STATUS_RADAR', this)">
+                <h2>// STATUS_RADAR</h2>
+                <div style="height: 200px;"><canvas id="skillsChart"></canvas></div>
+            </section>
+        </div>
+    </div>
+
+    <div id="detail-overlay" onclick="if(event.target == this) closeDetail()">
+        <div class="overlay-content">
+            <button class="close-btn" onclick="closeDetail()">[ CLOSE_X ]</button>
+            <div class="overlay-grid">
+                <div id="detail-visual" style="background: var(--surface); padding: 20px; border: 1px solid var(--gold-glow); overflow: hidden;"></div>
+                <div class="detail-pane">
+                    <h2 id="detail-title" style="color: var(--gold);">// SEGMENT_INTEL</h2>
+                    <div id="detail-body" class="detail-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tactical-hud" id="hud" style="display:none;">
+        <p>LOCATION: PITOGO_TAGUIG</p>
+        <p id="uptime">UPTIME: 00:00:00</p>
+        <p id="ping">LATENCY: 12ms</p>
+    </div>
+
+    <script>
+        const intelData = {
+            "CORE_PROFILE": {
+                title: "// DATA_LOG: SUBJECT_DNA",
+                body: "<strong>NAME:</strong> Josiah Asa Anota.<br><br><strong>VITAL_SIGNS:</strong> 25-year-old student and professional with a 2030 vision for National Security service.<br><br><strong>RELIABILITY:</strong> Known for extreme composure under technical fire and high-pressure de-escalation scenarios."
+            },
+            "TECH_ARSENAL": {
+                title: "// DATA_LOG: WEAPONRY_SPECS",
+                body: "<strong>OFFENSIVE:</strong> Kali Linux, Nmap vulnerability scanning, and isolated testing via VirtualBox.<br><br><strong>DEVELOPMENT:</strong> C++, JavaScript, and mobile app logic architecture.<br><br><strong>ADMIN:</strong> Expert documentation and scheduling via full MS Office Suite."
+            },
+            "PROJECT_DEV": {
+                title: "// DATA_LOG: IN-DEVELOPMENT_ASSETS",
+                body: "<strong>HUNTER_LOG_POSE:</strong> Fitness application gamifying physical conditioning with Bounty/XP systems and pixel art progression.<br><br><strong>COMPOSED_CONQUEST:</strong> Digital platform focused on self-discipline and mindset engineering.<br><br><strong>AMAZON_ENGINE:</strong> Affiliate infrastructure for niche product link distribution."
+            },
+            "FIELD_OPS": {
+                title: "// DATA_LOG: OPERATIONAL_HISTORY",
+                body: "<strong>FOUNDEVER (2025):</strong> TSR for North American tech; hardware/network diagnostics.<br><br><strong>CONCENTRIX (2019-2023):</strong> Advisor for international representative support; 100% resolution approval record.<br><br><strong>GIFT:</strong> NGO administrator managing outreach and community volunteer coordination."
+            },
+            "MILESTONES": {
+                title: "// DATA_LOG: VERIFIED_TRAITS",
+                body: "<strong>ACADEMIC:</strong> B.S. in Computer Science (Major in Application Development) from University of Makati (UMAK).<br><br><strong>CERTS:</strong> IBM Cybersecurity Fundamentals; TESDA Front Office Service; upcoming NC III (April 2026)."
+            },
+            "MARKET_MONITOR": {
+                title: "// DATA_LOG: INTEL_STREAMS",
+                body: "<strong>COLLECTIBLES:</strong> Market monitoring for One Piece TCG (PRB-02, OP-14) and 1990s Michael Jordan basketball card inserts.<br><br><strong>LIFESTYLE:</strong> Home baking exploration, specifically perfecting air fryer cookie recipes for optimal texture."
+            },
+            "PHYS_COND": {
+                title: "// DATA_LOG: BIOMETRIC_GOALS",
+                body: "<strong>OBJECTIVE:</strong> Meeting elite physical standards for professional entry into national security forces by 2030.<br><br><strong>TRAINING:</strong> Specialized focus on endurance running and functional strength building."
+            },
+            "STATUS_RADAR": {
+                title: "// DATA_LOG: PSYCHE_RADAR",
+                body: "<strong>COMPOSURE:</strong> 100%<br><strong>DE-ESCALATION:</strong> 95%<br><strong>NET_DIAGS:</strong> 90%<br><strong>GAMIFICATION:</strong> 85%<br><strong>VULN_SCANNING:</strong> 80%"
+            }
+        };
+
+        function spawnHireMe(e) {
+            const particle = document.createElement('div');
+            particle.className = 'hire-particle';
+            particle.innerText = 'HIRE ME PLEASE';
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = 120 + Math.random() * 150;
+            const targetX = Math.cos(angle) * velocity;
+            const targetY = Math.sin(angle) * velocity;
+            particle.style.left = e.clientX + 'px';
+            particle.style.top = e.clientY + 'px';
+            document.body.appendChild(particle);
+            particle.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${targetX}px, ${targetY}px) scale(1.1)`, opacity: 0 }
+            ], { duration: 2000, easing: 'ease-out', fill: 'forwards' });
+            setTimeout(() => particle.remove(), 2000);
+        }
+
+        function openDetail(key, element) {
+            const overlay = document.getElementById('detail-overlay');
+            const main = document.getElementById('main-content');
+            main.classList.add('glitch-flash');
+            document.getElementById('detail-title').innerText = intelData[key].title;
+            document.getElementById('detail-body').innerHTML = intelData[key].body;
+            document.getElementById('detail-visual').innerHTML = element.innerHTML;
+            overlay.style.display = 'flex';
+            setTimeout(() => main.classList.remove('glitch-flash'), 250);
+        }
+
+        function closeDetail() { document.getElementById('detail-overlay').style.display = 'none'; }
+
+        function enterArchive() {
+            const splash = document.getElementById('splash-screen');
+            const main = document.getElementById('main-content');
+            splash.classList.add('fade-out');
+            setTimeout(() => {
+                splash.style.display = 'none';
+                main.style.display = 'block';
+                document.getElementById('hud').style.display = 'flex';
+                main.classList.add('glitch-flash');
+                typeWriter("JOSIAH_ANOTA");
+                initChart();
+                startUptime();
+                setTimeout(() => main.classList.remove('glitch-flash'), 250);
+            }, 600);
+        }
+
+        function typeWriter(text) {
+            let i = 0; const target = document.getElementById("typewriter");
+            function type() { if (i < text.length) { target.innerHTML += text.charAt(i); i++; setTimeout(type, 80); } }
+            type();
+        }
+
+        function startUptime() {
+            let s = 0; setInterval(() => {
+                s++; let h = Math.floor(s/3600); let m = Math.floor((s%3600)/60); let sec = s%60;
+                document.getElementById('uptime').innerText = `UPTIME: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+            }, 1000);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['COMPOSURE', 'DE-ESC', 'NET_DIAGS', 'GAMIFY', 'VULN_SCAN', 'BAKING'],
+                    datasets: [{
+                        data: [100, 95, 90, 85, 80, 75],
+                        backgroundColor: 'rgba(201, 168, 76, 0.2)',
+                        borderColor: '#C9A84C',
+                        borderWidth: 2
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { grid: { color: 'rgba(201, 168, 76, 0.1)' }, angleLines: { color: 'rgba(201, 168, 76, 0.1)' }, ticks: { display: false }, pointLabels: { color: '#888070', font: { family: 'JetBrains Mono', size: 9 } } } }, plugins: { legend: { display: false } } }
+            });
+        }
+        function handleResume() { alert("PERSONNEL_DATA_LOCKED: Decryption key 'josiahanota03@gmail.com' required."); }
+    </script>
+</body>
+</html>

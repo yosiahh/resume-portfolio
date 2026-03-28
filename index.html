@@ -3,374 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JOSIAH | DOSSIER_v1.6.0</title>
+    <title>JOSIAH | DOSSIER_v2.0.0</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;700&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <style>
         :root {
-            --gold: #C9A84C;
-            --gold-glow: rgba(201, 168, 76, 0.3);
-            --bg: #080C10;
-            --surface: rgba(13, 17, 23, 0.95);
-            --text: #E8E0D0;
-            --text-dim: #888070;
-            --bounty-red: #FF4444;
+            --gold: #C9A84C; --gold-glow: rgba(201,168,76,0.3);
+            --bg: #080C10; --surface: rgba(13,17,23,0.95);
+            --text: #E8E0D0; --text-dim: #888070; --bounty-red: #FF4444;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            background: var(--bg); color: var(--text); 
+        body {
+            background: var(--bg); color: var(--text);
             font-family: 'JetBrains Mono', monospace; overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 2px 2px, rgba(201, 168, 76, 0.08) 1px, transparent 0),
-                linear-gradient(rgba(201, 168, 76, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(201, 168, 76, 0.02) 1px, transparent 1px);
-            background-size: 40px 40px, 120px 120px, 120px 120px;
+            background-image: radial-gradient(circle at 2px 2px,rgba(201,168,76,0.08) 1px,transparent 0),linear-gradient(rgba(201,168,76,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.02) 1px,transparent 1px);
+            background-size: 40px 40px,120px 120px,120px 120px;
         }
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:10px}
+        h1,h2,h3{font-family:'Unbounded',sans-serif;text-transform:uppercase}
+        @keyframes glitch-shake{0%{transform:translate(0)}20%{transform:translate(-3px,2px);filter:hue-rotate(90deg)}40%{transform:translate(-3px,-2px)}60%{transform:translate(3px,2px);filter:hue-rotate(-90deg)}100%{transform:translate(0)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+        @keyframes zoomIn{from{opacity:0;scale:.95}to{opacity:1;scale:1}}
+        @keyframes textFlicker{0%,18%,22%,25%,53%,57%,100%{opacity:1;text-shadow:0 0 15px var(--gold-glow)}20%,24%,55%{opacity:.3;text-shadow:none}}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes bootLine{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes deployPulse{0%,100%{box-shadow:0 0 5px var(--gold)}50%{box-shadow:0 0 25px var(--gold),0 0 50px var(--gold-glow)}}
+        .glitch-flash{animation:glitch-shake .25s ease-in-out;filter:brightness(1.4)}
+        .fade-out{opacity:0;pointer-events:none}
+        .hire-particle{position:fixed;pointer-events:none;color:var(--gold);font-family:'Unbounded';font-weight:bold;font-size:.7rem;z-index:30000;text-shadow:0 0 10px var(--gold-glow);white-space:nowrap}
 
-        @keyframes glitch-shake {
-            0% { transform: translate(0); }
-            20% { transform: translate(-3px, 2px); filter: hue-rotate(90deg); }
-            40% { transform: translate(-3px, -2px); }
-            60% { transform: translate(3px, 2px); filter: hue-rotate(-90deg); }
-            100% { transform: translate(0); }
+        /* SPLASH */
+        #splash-screen{position:fixed;inset:0;background:radial-gradient(circle at center,#161B22 0%,#080C10 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;transition:.6s ease-in-out;overflow:hidden}
+        #splash-screen::before{content:" ";display:block;position:absolute;top:0;left:0;bottom:0;right:0;background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.25) 50%),linear-gradient(90deg,rgba(255,0,0,.06),rgba(0,255,0,.02),rgba(0,0,255,.06));z-index:1;background-size:100% 2px,3px 100%;pointer-events:none}
+        .menu-title{font-size:clamp(1.2rem,7vw,2.5rem);color:var(--gold);letter-spacing:8px;margin-bottom:40px;text-shadow:0 0 15px var(--gold-glow);text-align:center;animation:textFlicker 3s linear infinite;position:relative;z-index:2}
+        .menu-options{display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;padding:0 20px;position:relative;z-index:2}
+        .menu-btn{background:rgba(0,0,0,.5);border:1px solid rgba(201,168,76,.2);color:var(--text);padding:18px;font-family:'Rajdhani';cursor:pointer;text-align:left;transition:.3s;text-transform:uppercase;letter-spacing:2px;font-weight:700;position:relative;overflow:hidden}
+        .menu-btn::after{content:"DECRYPTING...";position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--gold);color:#000;display:flex;align-items:center;padding-left:18px;transition:.4s cubic-bezier(.19,1,.22,1);font-weight:800}
+        .menu-btn:hover::after{left:0}.menu-btn:hover{padding-left:30px}
+        #matrix-canvas{position:absolute;inset:0;z-index:0;opacity:.15}
+
+        /* BOOT */
+        #boot-screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;justify-content:center;padding:40px;z-index:9998;font-size:.75rem;line-height:2;overflow-y:auto}
+        .boot-line{opacity:0;animation:bootLine .3s ease forwards;color:var(--gold)}
+        .boot-line.dim{color:var(--text-dim)}.boot-line.err{color:var(--bounty-red)}
+
+        /* DEPLOY */
+        #deploy-overlay{position:fixed;inset:0;background:rgba(8,12,16,.97);z-index:50000;display:none;flex-direction:column;justify-content:center;align-items:center;gap:20px;padding:20px;text-align:center}
+        .deploy-title{font-family:'Unbounded';font-size:clamp(1rem,4vw,1.8rem);color:var(--gold);letter-spacing:4px;animation:deployPulse 1s infinite}
+        .deploy-bar-wrap{width:min(400px,90vw);height:6px;background:rgba(201,168,76,.1);border-radius:3px;overflow:hidden}
+        .deploy-bar{height:100%;background:linear-gradient(90deg,var(--gold),#fff8dc);width:0%;transition:width .3s ease;box-shadow:0 0 15px var(--gold)}
+        .deploy-log{font-size:.65rem;color:var(--text-dim);letter-spacing:2px;min-height:1.5em}
+
+        /* TERMINAL */
+        #terminal-overlay{position:fixed;inset:0;background:rgba(8,12,16,.97);z-index:20000;display:none;flex-direction:column;padding:30px;overflow:hidden}
+        .terminal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--gold-glow);padding-bottom:10px;margin-bottom:20px}
+        .terminal-title{font-size:.7rem;color:var(--gold);letter-spacing:4px}
+        .terminal-close{background:none;border:1px solid var(--gold-glow);color:var(--gold);padding:4px 10px;cursor:pointer;font-family:'JetBrains Mono';font-size:.65rem;transition:.2s}
+        .terminal-close:hover{background:var(--gold);color:#000}
+        #terminal-output{flex:1;overflow-y:auto;font-size:.75rem;line-height:1.8;color:var(--text-dim);margin-bottom:15px}
+        #terminal-output .t-gold{color:var(--gold)}.t-err{color:var(--bounty-red)}.t-success{color:#4CAF50}.t-white{color:var(--text)}
+        .terminal-input-row{display:flex;align-items:center;gap:10px;border-top:1px solid var(--gold-glow);padding-top:12px}
+        .terminal-prompt{color:var(--gold);font-size:.75rem;white-space:nowrap}
+        #terminal-input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'JetBrains Mono';font-size:.75rem;caret-color:var(--gold)}
+
+        /* MAIN */
+        #main-content{display:none;padding:20px;max-width:1400px;margin:0 auto;min-height:100vh}
+        .header{border-bottom:2px solid var(--gold);padding-bottom:20px;margin-bottom:30px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px}
+        .header h1{font-size:clamp(1.4rem,4vw,2rem);color:var(--gold)}
+        .header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+        .action-btn{background:transparent;border:1px solid var(--gold-glow);color:var(--gold);padding:6px 14px;font-family:'JetBrains Mono';font-size:.6rem;cursor:pointer;letter-spacing:2px;transition:.2s;text-transform:uppercase}
+        .action-btn:hover{background:var(--gold);color:#000}
+        .grid-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px;padding-bottom:100px}
+        .card{background:var(--surface);border:1px solid rgba(201,168,76,.1);padding:20px;border-top:3px solid var(--gold);backdrop-filter:blur(10px);transition:.3s;cursor:pointer;position:relative;animation:fadeIn .5s ease forwards}
+        .card:hover{border-color:var(--gold);box-shadow:0 0 15px var(--gold-glow);transform:translateY(-2px)}
+        .card h2{font-size:.75rem;margin-bottom:15px;color:var(--gold);letter-spacing:1px}
+        .card-badge{position:absolute;top:10px;right:10px;font-size:.55rem;background:var(--gold);color:#000;padding:2px 6px;font-weight:700;letter-spacing:1px}
+
+        /* DETAIL */
+        #detail-overlay{position:fixed;inset:0;background:rgba(8,12,16,.98);backdrop-filter:blur(15px);z-index:10000;display:none;justify-content:center;align-items:center;padding:20px}
+        .overlay-content{width:100%;max-width:1100px;position:relative;animation:zoomIn .3s ease-out}
+        .overlay-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:30px}
+        @media(max-width:850px){.overlay-grid{grid-template-columns:1fr}}
+        .detail-pane{background:rgba(201,168,76,.03);border:1px solid rgba(201,168,76,.1);padding:30px;border-left:4px solid var(--gold);max-height:80vh;overflow-y:auto}
+        .detail-body{font-size:.85rem;line-height:1.7;color:var(--text-dim);margin-top:20px}
+        .detail-body strong{color:var(--gold)}
+        .close-btn{position:absolute;top:-40px;right:0;background:transparent;border:1px solid var(--gold-glow);color:var(--gold);font-family:'Rajdhani';cursor:pointer;font-size:.9rem;padding:4px 12px;transition:.2s}
+        .close-btn:hover{background:var(--gold);color:#000}
+
+        /* ARSENAL */
+        .arsenal-item{display:flex;align-items:center;gap:15px;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.05);cursor:pointer;transition:.2s}
+        .arsenal-item:hover{background:rgba(201,168,76,.05);padding-left:6px}
+        .weapon-name{font-family:'Unbounded';font-size:.6rem;color:var(--gold);width:100px;flex-shrink:0}
+        .weapon-bar{flex-grow:1;height:4px;background:rgba(255,255,255,.05);position:relative}
+        .weapon-fill{position:absolute;height:100%;background:var(--gold);box-shadow:0 0 10px var(--gold-glow)}
+        .weapon-pct{font-size:.6rem;color:var(--text-dim);width:35px;text-align:right}
+
+        /* TOOLTIP */
+        .skill-tooltip{position:fixed;background:var(--surface);border:1px solid var(--gold);padding:10px 14px;font-size:.65rem;color:var(--text);z-index:99999;pointer-events:none;max-width:220px;line-height:1.6;border-left:3px solid var(--gold);opacity:0;transition:opacity .2s}
+
+        /* DATA */
+        .data-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.7rem}
+        .data-val{color:var(--gold);font-weight:bold}
+        .gh-stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.05);font-size:.65rem}
+        .gh-val{color:var(--gold);font-weight:bold;font-size:.8rem}
+        .gh-loading{color:var(--text-dim);font-size:.6rem;animation:pulse 1.5s infinite}
+
+        /* HUD */
+        .tactical-hud{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;flex-wrap:wrap;gap:4px;padding:8px 10px;background:rgba(8,12,16,.95);font-family:'JetBrains Mono';font-size:.6rem;color:var(--gold);border-top:1px solid var(--gold-glow);z-index:10}
+        .bounty-amount{color:var(--bounty-red);font-weight:900;animation:pulse 2s infinite;cursor:pointer}
+        .hud-btn{background:none;border:none;color:var(--gold);font-family:'JetBrains Mono';font-size:.6rem;cursor:pointer;letter-spacing:1px;padding:0;transition:.2s}
+        .hud-btn:hover{color:#fff;text-shadow:0 0 8px var(--gold)}
+        .copy-success{color:#4CAF50!important}
+
+        /* KONAMI */
+        #konami-overlay{position:fixed;inset:0;background:rgba(8,12,16,.98);z-index:99999;display:none;flex-direction:column;justify-content:center;align-items:center;gap:20px;text-align:center;padding:20px}
+        .konami-title{font-family:'Unbounded';font-size:clamp(1rem,5vw,2rem);color:var(--gold);letter-spacing:4px;animation:textFlicker 2s infinite}
+        .konami-text{font-size:.8rem;color:var(--text-dim);max-width:500px;line-height:1.8}
+        .konami-close{margin-top:20px;background:none;border:1px solid var(--gold);color:var(--gold);padding:10px 24px;font-family:'JetBrains Mono';cursor:pointer;letter-spacing:2px;transition:.2s}
+        .konami-close:hover{background:var(--gold);color:#000}
+
+        /* MOBILE */
+        @media(max-width:600px){
+            #main-content{padding:12px}
+            .header{flex-direction:column;align-items:flex-start}
+            .header-actions{width:100%;justify-content:flex-start}
+            .detail-pane{padding:16px}.detail-body{font-size:.78rem}
+            .tactical-hud{font-size:.5rem;padding:6px}
+            #terminal-overlay{padding:16px}
+            #terminal-output{font-size:.68rem}
+            #terminal-input{font-size:.68rem}
+            .overlay-grid{grid-template-columns:1fr}
+            #detail-overlay{padding:12px}
         }
-        .glitch-flash { animation: glitch-shake 0.25s ease-in-out; filter: brightness(1.4); }
-
-        .hire-particle {
-            position: fixed; pointer-events: none; color: var(--gold);
-            font-family: 'Unbounded'; font-weight: bold; font-size: 0.7rem;
-            z-index: 30000; text-shadow: 0 0 10px var(--gold-glow); white-space: nowrap;
-        }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-
-        h1, h2, h3 { font-family: 'Unbounded', sans-serif; text-transform: uppercase; }
-
-        #splash-screen {
-            position: fixed; inset: 0;
-            background: radial-gradient(circle at center, #161B22 0%, #080C10 100%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; transition: 0.6s ease-in-out;
-        }
-        .menu-title { font-size: clamp(1.2rem, 7vw, 2.5rem); color: var(--gold); letter-spacing: 8px; margin-bottom: 40px; text-shadow: 0 0 15px var(--gold-glow); text-align: center; }
-        .menu-options { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; padding: 0 20px; }
-        .menu-btn { background: rgba(0,0,0,0.5); border: 1px solid rgba(201, 168, 76, 0.2); color: var(--text); padding: 18px; font-family: 'Rajdhani'; cursor: pointer; text-align: left; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-        .menu-btn:hover { background: var(--gold); color: #000; padding-left: 30px; }
-
-        #main-content { display: none; padding: 20px; max-width: 1400px; margin: 0 auto; min-height: 100vh; }
-        .header { border-bottom: 2px solid var(--gold); padding-bottom: 20px; margin-bottom: 30px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; }
-        .header h1 { font-size: clamp(1.4rem, 4vw, 2rem); color: var(--gold); }
-        
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 20px; padding-bottom: 100px; }
-
-        .card { background: var(--surface); border: 1px solid rgba(201, 168, 76, 0.1); padding: 20px; border-top: 3px solid var(--gold); backdrop-filter: blur(10px); transition: 0.3s; cursor: pointer; position: relative; }
-        .card:hover { border-color: var(--gold); box-shadow: 0 0 15px var(--gold-glow); transform: translateY(-2px); }
-        .card h2 { font-size: 0.75rem; margin-bottom: 15px; color: var(--gold); letter-spacing: 1px; }
-
-        #detail-overlay {
-            position: fixed; inset: 0; background: rgba(8, 12, 16, 0.98); backdrop-filter: blur(15px);
-            z-index: 10000; display: none; justify-content: center; align-items: center; padding: 40px;
-        }
-        .overlay-content { width: 100%; max-width: 1100px; position: relative; animation: zoomIn 0.3s ease-out; }
-        @keyframes zoomIn { from { opacity: 0; scale: 0.95; } to { opacity: 1; scale: 1; } }
-        .overlay-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; }
-        @media (max-width: 850px) { .overlay-grid { grid-template-columns: 1fr; } }
-
-        .detail-pane { background: rgba(201, 168, 76, 0.03); border: 1px solid rgba(201, 168, 76, 0.1); padding: 30px; border-left: 4px solid var(--gold); }
-        .detail-body { font-size: 0.85rem; line-height: 1.7; color: var(--text-dim); margin-top: 20px; }
-        .detail-body strong { color: var(--gold); }
-        .close-btn { position: absolute; top: -50px; right: 0; background: transparent; border: none; color: var(--gold); font-family: 'Rajdhani'; cursor: pointer; font-size: 1.2rem; }
-
-        .arsenal-item { display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid rgba(201, 168, 76, 0.05); }
-        .weapon-name { font-family: 'Unbounded'; font-size: 0.6rem; color: var(--gold); width: 100px; }
-        .weapon-bar { flex-grow: 1; height: 4px; background: rgba(255,255,255,0.05); position: relative; }
-        .weapon-fill { position: absolute; height: 100%; background: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
-        .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.7rem; }
-        .data-val { color: var(--gold); font-weight: bold; }
-        
-        .tactical-hud { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-around; padding: 10px; background: rgba(8, 12, 16, 0.95); font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--gold); border-top: 1px solid var(--gold-glow); z-index: 10; }
-        .bounty-amount { color: var(--bounty-red); font-weight: 900; animation: pulse 2s infinite; cursor: pointer; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-        .fade-out { opacity: 0; pointer-events: none; }
-        /* SCANLINE OVERLAY: Place this to create the CRT monitor effect */
-#splash-screen::before {
-    content: " ";
-    display: block;
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    z-index: 10001;
-    background-size: 100% 2px, 3px 100%;
-    pointer-events: none;
-}
-
-/* FLICKER ANIMATION: Apply this to the "FILE_FOUND" text */
-.menu-title {
-    animation: textFlicker 3s linear infinite;
-}
-
-@keyframes textFlicker {
-    0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; text-shadow: 0 0 15px var(--gold-glow); }
-    20%, 24%, 55% { opacity: 0.3; text-shadow: none; }
-}
-
-/* DECRYPTING HOVER: This creates the sliding gold bar effect on buttons */
-.menu-btn {
-    position: relative;
-    overflow: hidden;
-}
-
-.menu-btn::after {
-    content: "DECRYPTING...";
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: var(--gold);
-    color: #000;
-    display: flex;
-    align-items: center;
-    padding-left: 18px;
-    transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-    font-weight: 800;
-}
-
-.menu-btn:hover::after {
-    left: 0;
-}
     </style>
 </head>
 <body>
 
-   <div id="splash-screen">
-    <div class="menu-title">FILE_FOUND</div> 
+<div class="skill-tooltip" id="skill-tooltip"></div>
+<canvas id="matrix-canvas"></canvas>
+
+<!-- SPLASH -->
+<div id="splash-screen">
+    <div class="menu-title">FILE_FOUND</div>
     <div class="menu-options">
-        <button class="menu-btn" onclick="enterArchive()">[ ACCESS_FILES ]</button>
-        <button class="menu-btn" onclick="window.open('https://github.com/yosiahh', '_blank')">[ REPOSITORY ]</button>
+        <button class="menu-btn" onclick="startBoot()">[ ACCESS_FILES ]</button>
+        <button class="menu-btn" onclick="window.open('https://github.com/yosiahh','_blank')">[ REPOSITORY ]</button>
+        <button class="menu-btn" onclick="openTerminalFromSplash()">[ TERMINAL_ACCESS ]</button>
         <button class="menu-btn" onclick="handleResume()">[ PERSONNEL_DATA ]</button>
     </div>
 </div>
-    <div id="main-content">
-        <header class="header">
-            <div>
-                <h1 id="typewriter"></h1>
-                <p style="font-size: 0.6rem; color: var(--gold); font-weight: bold;">NODE: JOSIAH_SYSTEM_v1.6.0</p>
-            </div>
-            <div style="text-align: right; font-family: 'Rajdhani';" onclick="spawnHireMe(event)">
-                <p style="font-size: 0.55rem; color: var(--text-dim); letter-spacing: 1px; cursor: pointer;">WANTED // DEAD OR HIRED</p>
-                <p class="bounty-amount" style="font-size: clamp(0.9rem, 3vw, 1.2rem);">฿30,000,000—</p>
-            </div>
-        </header>
 
-        <div class="grid-container">
-            <section class="card" onclick="openDetail('CORE_PROFILE', this)">
-                <h2>// CORE_PROFILE</h2>
-                <div class="data-row"><span>DESIGNATION</span><span class="data-val">JOSIAH_ASA_ANOTA</span></div>
-                <div class="data-row"><span>AGE</span><span class="data-val">25_YEARS</span></div>
-                <div class="data-row"><span>LOCATION</span><span class="data-val">PITOGO_TAGUIG</span></div>
-                <div class="data-row"><span>SPECIALIZATION</span><span class="data-val">CYBER_OPS</span></div>
-            </section>
+<!-- BOOT -->
+<div id="boot-screen"></div>
 
-            <section class="card" onclick="openDetail('TECH_ARSENAL', this)">
-                <h2>// TECH_ARSENAL</h2>
-                <div class="arsenal-item"><span class="weapon-name">KALI_LINUX</span><div class="weapon-bar"><div class="weapon-fill" style="width: 82%;"></div></div></div>
-                <div class="arsenal-item"><span class="weapon-name">NMAP_SCAN</span><div class="weapon-bar"><div class="weapon-fill" style="width: 78%;"></div></div></div>
-                <div class="arsenal-item"><span class="weapon-name">VIRTUALBOX</span><div class="weapon-bar"><div class="weapon-fill" style="width: 85%;"></div></div></div>
-                <div class="arsenal-item"><span class="weapon-name">C++ / JS</span><div class="weapon-bar"><div class="weapon-fill" style="width: 80%;"></div></div></div>
-                <div class="arsenal-item"><span class="weapon-name">MS_OFFICE</span><div class="weapon-bar"><div class="weapon-fill" style="width: 95%;"></div></div></div>
-            </section>
+<!-- DEPLOY -->
+<div id="deploy-overlay">
+    <div class="deploy-title">DEPLOYING_CANDIDATE...</div>
+    <div class="deploy-bar-wrap"><div class="deploy-bar" id="deploy-bar"></div></div>
+    <div class="deploy-log" id="deploy-log">INITIALIZING...</div>
+</div>
 
-            <section class="card" onclick="openDetail('PROJECT_DEV', this)">
-                <h2>// PROJECT_DEV</h2>
-                <div style="border-left: 3px solid var(--gold); padding: 10px; background: rgba(201,168,76,0.05); margin-bottom: 12px;">
-                    <h3 style="font-size: 0.7rem; color: var(--gold);">HUNTER_LOG_POSE</h3>
-                    <p style="font-size: 0.55rem; color: var(--text-dim);">Fitness gamification with Bounty/XP mechanics.</p>
-                </div>
-                <div style="border-left: 2px solid var(--text-dim); padding: 10px; margin-bottom: 12px;">
-                    <h3 style="font-size: 0.7rem;">COMPOSED_CONQUEST</h3>
-                    <p style="font-size: 0.55rem; color: var(--text-dim);">Strategy for self-discipline mindset resources.</p>
-                </div>
-                <div style="border-left: 2px solid var(--text-dim); padding: 10px;">
-                    <h3 style="font-size: 0.7rem;">AMAZON_AFFILIATE</h3>
-                    <p style="font-size: 0.55rem; color: var(--text-dim);">Automated link distribution infrastructure.</p>
-                </div>
-            </section>
-
-            <section class="card" onclick="openDetail('FIELD_OPS', this)">
-                <h2>// FIELD_OPS</h2>
-                <div class="data-row"><span>FOUNDEVER</span><span class="data-val">TSR_2025</span></div>
-                <div class="data-row"><span>CONCENTRIX</span><span class="data-val">ADVISOR</span></div>
-                <div class="data-row"><span>GIFT_CHR</span><span class="data-val">ADMIN_COORD</span></div>
-                <p style="font-size: 0.55rem; color: var(--text-dim); margin-top: 10px;">* 100% resolution approval rating verified.</p>
-            </section>
-
-            <section class="card" onclick="openDetail('MILESTONES', this)">
-                <h2>// MILESTONES</h2>
-                <div class="data-row"><span>UMAK_BSCS</span><span class="data-val">APP_DEV_MAJ</span></div>
-                <div class="data-row"><span>IBM_CERT</span><span class="data-val">CYBER_FUND</span></div>
-                <div class="data-row"><span>TESDA_NCIII</span><span class="data-val">APRIL_2026</span></div>
-                <div class="data-row"><span>TARGET_2030</span><span class="data-val">NAT_SECURITY</span></div>
-            </section>
-
-            <section class="card" onclick="openDetail('MARKET_MONITOR', this)">
-                <h2>// MARKET_MONITOR</h2>
-                <div class="data-row"><span>OP_CARD_TCG</span><span class="data-val">PRB-02/OP-14</span></div>
-                <div class="data-row"><span>90s_NBA_MJ</span><span class="data-val">RARITY_WATCH</span></div>
-                <div class="data-row"><span>HOBBY_LAB</span><span class="data-val">AIRFRY_BAKING</span></div>
-                <p style="font-size: 0.55rem; color: var(--text-dim); margin-top: 10px;">* Active tracking of card market fluctuations.</p>
-            </section>
-
-            <section class="card" onclick="openDetail('PHYS_COND', this)">
-                <h2>// PHYS_COND</h2>
-                <div class="data-row"><span>ENDURANCE</span><span class="data-val">RUNNING_VOL</span></div>
-                <div class="data-row"><span>STRENGTH</span><span class="data-val">FUNCTIONAL</span></div>
-                <div class="data-row"><span>OBJECTIVE</span><span class="data-val">FORCE_FITNESS</span></div>
-                <p style="font-size: 0.55rem; color: var(--text-dim); margin-top: 10px;">Preparing for national security professional entry.</p>
-            </section>
-
-            <section class="card" onclick="openDetail('STATUS_RADAR', this)">
-                <h2>// STATUS_RADAR</h2>
-                <div style="height: 200px;"><canvas id="skillsChart"></canvas></div>
-            </section>
-        </div>
+<!-- TERMINAL -->
+<div id="terminal-overlay">
+    <div class="terminal-header">
+        <span class="terminal-title">JOSIAH_OS v2.0 // TERMINAL_ACCESS</span>
+        <button class="terminal-close" onclick="closeTerminal()">[ EXIT ]</button>
     </div>
+    <div id="terminal-output"></div>
+    <div class="terminal-input-row">
+        <span class="terminal-prompt">josiah@dossier:~$</span>
+        <input type="text" id="terminal-input" placeholder="type 'help' for commands..." autocomplete="off" spellcheck="false">
+    </div>
+</div>
 
-    <div id="detail-overlay" onclick="if(event.target == this) closeDetail()">
-        <div class="overlay-content">
-            <button class="close-btn" onclick="closeDetail()">[ CLOSE_X ]</button>
-            <div class="overlay-grid">
-                <div id="detail-visual" style="background: var(--surface); padding: 20px; border: 1px solid var(--gold-glow); overflow: hidden;"></div>
-                <div class="detail-pane">
-                    <h2 id="detail-title" style="color: var(--gold);">// SEGMENT_INTEL</h2>
-                    <div id="detail-body" class="detail-body"></div>
-                </div>
+<!-- KONAMI -->
+<div id="konami-overlay">
+    <div class="konami-title">⚔️ CLASSIFIED_DOSSIER ⚔️</div>
+    <div class="konami-text">
+        You found the hidden file.<br><br>
+        <span style="color:var(--gold)">TRUTH_LOG:</span> This entire portfolio was built in under 72 hours using nothing but a keyboard, AI tools, and the refusal to accept limitations as final.<br><br>
+        No degree required. No permission granted. Just quiet, relentless execution.<br><br>
+        <span style="color:var(--gold)">"Conquer everything. Quietly."</span><br><br>
+        — If you're a recruiter reading this, you just found someone who builds things that work. The rest is just paperwork. 📄
+    </div>
+    <button class="konami-close" onclick="document.getElementById('konami-overlay').style.display='none'">[ CLOSE_FILE ]</button>
+</div>
+
+<!-- DETAIL -->
+<div id="detail-overlay" onclick="if(event.target==this)closeDetail()">
+    <div class="overlay-content">
+        <button class="close-btn" onclick="closeDetail()">[ CLOSE_X ]</button>
+        <div class="overlay-grid">
+            <div id="detail-visual" style="background:var(--surface);padding:20px;border:1px solid var(--gold-glow);overflow-y:auto;max-height:80vh"></div>
+            <div class="detail-pane">
+                <h2 id="detail-title" style="color:var(--gold)">// SEGMENT_INTEL</h2>
+                <div id="detail-body" class="detail-body"></div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="tactical-hud" id="hud" style="display:none;">
-        <p>LOCATION: PITOGO_TAGUIG</p>
-        <p id="uptime">UPTIME: 00:00:00</p>
-        <p id="ping">LATENCY: 12ms</p>
+<!-- MAIN -->
+<div id="main-content">
+    <header class="header">
+        <div>
+            <h1 id="typewriter"></h1>
+            <p style="font-size:.6rem;color:var(--gold);font-weight:bold;margin-top:4px">NODE: JOSIAH_SYSTEM_v2.0.0 // AI_AUTOMATION_SPECIALIST</p>
+        </div>
+        <div class="header-actions">
+            <button class="action-btn" onclick="openTerminal()">[ TERMINAL ]</button>
+            <button class="action-btn" id="copy-email-btn" onclick="copyEmail()">[ COPY_EMAIL ]</button>
+            <div style="text-align:right;cursor:pointer" onclick="triggerDeploy(event)">
+                <p style="font-size:.55rem;color:var(--text-dim);letter-spacing:1px">WANTED // DEAD OR HIRED</p>
+                <p class="bounty-amount" style="font-size:clamp(.9rem,3vw,1.2rem)">฿30,000,000—</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="grid-container">
+
+        <section class="card" onclick="openDetail('CORE_PROFILE',this)">
+            <h2>// CORE_PROFILE</h2>
+            <div class="data-row"><span>DESIGNATION</span><span class="data-val">JOSIAH_ASA_ANOTA</span></div>
+            <div class="data-row"><span>AGE</span><span class="data-val">25_YEARS</span></div>
+            <div class="data-row"><span>LOCATION</span><span class="data-val">PITOGO_TAGUIG</span></div>
+            <div class="data-row"><span>SPECIALIZATION</span><span class="data-val">AI_AUTOMATION</span></div>
+            <div class="data-row"><span>STATUS</span><span class="data-val" style="color:var(--bounty-red)">AVAILABLE</span></div>
+        </section>
+
+        <section class="card" onclick="openDetail('TECH_ARSENAL',this)">
+            <div class="card-badge">HOVER SKILLS</div>
+            <h2>// TECH_ARSENAL</h2>
+            <div class="arsenal-item" onmouseenter="showTooltip(event,'AI Prompt Engineering','Writing prompts that make AI behave like a real person. Built the ComposedConquest content engine — live across 5 platforms.')" onmouseleave="hideTooltip()">
+                <span class="weapon-name">AI_PROMPT</span><div class="weapon-bar"><div class="weapon-fill" style="width:90%"></div></div><span class="weapon-pct">90%</span>
+            </div>
+            <div class="arsenal-item" onmouseenter="showTooltip(event,'Brand Strategy','Built ComposedConquest from zero: name, logo, tagline, hidden meaning, content strategy. All original.')" onmouseleave="hideTooltip()">
+                <span class="weapon-name">BRAND_STRAT</span><div class="weapon-bar"><div class="weapon-fill" style="width:92%"></div></div><span class="weapon-pct">92%</span>
+            </div>
+            <div class="arsenal-item" onmouseenter="showTooltip(event,'n8n Automation','Self-hosted via Docker. Built schedule triggers, Gemini AI nodes, HTTP request pipelines from scratch.')" onmouseleave="hideTooltip()">
+                <span class="weapon-name">N8N_AUTO</span><div class="weapon-bar"><div class="weapon-fill" style="width:78%"></div></div><span class="weapon-pct">78%</span>
+            </div>
+            <div class="arsenal-item" onmouseenter="showTooltip(event,'Make.com','Cloud automation pipeline. Gemini → webhook → Instagram auto-post. Runs 24/7 without a laptop.')" onmouseleave="hideTooltip()">
+                <span class="weapon-name">MAKE_COM</span><div class="weapon-bar"><div class="weapon-fill" style="width:77%"></div></div><span class="weapon-pct">77%</span>
+            </div>
+            <div class="arsenal-item" onmouseenter="showTooltip(event,'Meta Graph API','Navigated OAuth tokens, page access tokens, Instagram Business API. Battle-tested against Meta auth hell.')" onmouseleave="hideTooltip()">
+                <span class="weapon-name">META_API</span><div class="weapon-bar"><div class="weapon-fill" style="width:85%"></div></div><span class="weapon-pct">85%</span>
+            </div>
+            <div class="arsenal-item" onmouseenter="showTooltip(event,'Docker','Self-hosted n8n on Windows via Docker + WSL2. Solved node-gyp errors and container networking issues.')" onmouseleave="hideTooltip()">
+                <span class="weapon-name">DOCKER</span><div class="weapon-bar"><div class="weapon-fill" style="width:72%"></div></div><span class="weapon-pct">72%</span>
+            </div>
+            <div class="arsenal-item" onmouseenter="showTooltip(event,'HTML / CSS / JS','Built this portfolio and the ComposedConquest landing page. Both live on GitHub Pages.')" onmouseleave="hideTooltip()">
+                <span class="weapon-name">HTML_CSS_JS</span><div class="weapon-bar"><div class="weapon-fill" style="width:65%"></div></div><span class="weapon-pct">65%</span>
+            </div>
+        </section>
+
+        <section class="card" onclick="openDetail('PROJECT_DEV',this)">
+            <h2>// PROJECT_DEV</h2>
+            <div style="border-left:3px solid var(--gold);padding:10px;background:rgba(201,168,76,.05);margin-bottom:12px">
+                <h3 style="font-size:.7rem;color:var(--gold)">COMPOSED_CONQUEST</h3>
+                <p style="font-size:.55rem;color:var(--text-dim);margin-top:4px">AI-automated brand. 5 platforms. n8n + Gemini + Make.com. Affiliate monetized.</p>
+            </div>
+            <div style="border-left:2px solid var(--gold);padding:10px;background:rgba(201,168,76,.02);margin-bottom:12px">
+                <h3 style="font-size:.7rem;color:var(--gold)">HUNTER_LOG_POSE</h3>
+                <p style="font-size:.55rem;color:var(--text-dim);margin-top:4px">Fitness gamification. Bounty/XP mechanics. Pixel art progression.</p>
+            </div>
+            <div style="border-left:2px solid var(--text-dim);padding:10px">
+                <h3 style="font-size:.7rem">RESUME_DOSSIER</h3>
+                <p style="font-size:.55rem;color:var(--text-dim);margin-top:4px">This portfolio. Terminal. Matrix. Deploy animation. GitHub API. All vanilla JS.</p>
+            </div>
+        </section>
+
+        <section class="card" onclick="openDetail('AUTOMATION_OPS',this)">
+            <div class="card-badge">LIVE</div>
+            <h2>// AUTOMATION_OPS</h2>
+            <div class="data-row"><span>PIPELINE</span><span class="data-val" style="color:#4CAF50">DEPLOYED</span></div>
+            <div class="data-row"><span>PLATFORMS</span><span class="data-val">5_LIVE</span></div>
+            <div class="data-row"><span>AI_MODEL</span><span class="data-val">GEMINI_2.5</span></div>
+            <div class="data-row"><span>RUNTIME</span><span class="data-val">24/7_CLOUD</span></div>
+            <div class="data-row"><span>BUILD_COST</span><span class="data-val">₱0</span></div>
+            <div class="data-row"><span>BUILD_TIME</span><span class="data-val">48_HRS</span></div>
+        </section>
+
+        <section class="card" onclick="openDetail('FIELD_OPS',this)">
+            <h2>// FIELD_OPS</h2>
+            <div class="data-row"><span>FOUNDEVER</span><span class="data-val">TSR_2025</span></div>
+            <div class="data-row"><span>CONCENTRIX</span><span class="data-val">ADVISOR_2019-23</span></div>
+            <div class="data-row"><span>GIFT_CHR</span><span class="data-val">ADMIN_COORD</span></div>
+            <p style="font-size:.55rem;color:var(--gold);margin-top:10px">★ 100% resolution approval rating verified.</p>
+        </section>
+
+        <section class="card" onclick="openDetail('MILESTONES',this)">
+            <h2>// MILESTONES</h2>
+            <div class="data-row"><span>UMAK_BSCS</span><span class="data-val">APP_DEV_MAJ</span></div>
+            <div class="data-row"><span>IBM_CERT</span><span class="data-val">CYBER_FUND</span></div>
+            <div class="data-row"><span>TESDA_NCIII</span><span class="data-val">APRIL_2026</span></div>
+            <div class="data-row"><span>TARGET_2030</span><span class="data-val">NAT_SECURITY</span></div>
+        </section>
+
+        <section class="card" onclick="openDetail('CAREER_INTEL',this)">
+            <div class="card-badge">PRIORITY</div>
+            <h2>// CAREER_INTEL</h2>
+            <div class="data-row"><span>AUTO_SPEC</span><span class="data-val">₱40-80K/MO</span></div>
+            <div class="data-row"><span>AI_PROMPT_ENG</span><span class="data-val">$30-80/HR</span></div>
+            <div class="data-row"><span>NO_CODE_DEV</span><span class="data-val">₱35-70K/MO</span></div>
+            <div class="data-row"><span>FREELANCE</span><span class="data-val">$25-60/HR</span></div>
+            <p style="font-size:.55rem;color:var(--gold);margin-top:10px">▶ TARGET: REMOTE_AUTOMATION_ROLE</p>
+        </section>
+
+        <section class="card" onclick="openDetail('GITHUB_STATS',this)">
+            <h2>// GITHUB_STATS</h2>
+            <div id="gh-stats-card"><p class="gh-loading">FETCHING_INTEL...</p></div>
+        </section>
+
+        <section class="card" onclick="openDetail('STATUS_RADAR',this)">
+            <h2>// STATUS_RADAR</h2>
+            <div style="height:200px"><canvas id="skillsChart"></canvas></div>
+        </section>
+
+        <section class="card" onclick="openDetail('PHYS_COND',this)">
+            <h2>// PHYS_COND</h2>
+            <div class="data-row"><span>ENDURANCE</span><span class="data-val">RUNNING_VOL</span></div>
+            <div class="data-row"><span>STRENGTH</span><span class="data-val">FUNCTIONAL</span></div>
+            <div class="data-row"><span>OBJECTIVE</span><span class="data-val">FORCE_FITNESS</span></div>
+            <p style="font-size:.55rem;color:var(--text-dim);margin-top:10px">Preparing for national security professional entry by 2030.</p>
+        </section>
+
     </div>
+</div>
 
-    <script>
-        const intelData = {
-            "CORE_PROFILE": {
-                title: "// DATA_LOG: SUBJECT_DNA",
-                body: "<strong>NAME:</strong> Josiah Asa Anota.<br><br><strong>VITAL_SIGNS:</strong> 25-year-old student and professional with a 2030 vision for National Security service.<br><br><strong>RELIABILITY:</strong> Known for extreme composure under technical fire and high-pressure de-escalation scenarios."
-            },
-            "TECH_ARSENAL": {
-                title: "// DATA_LOG: WEAPONRY_SPECS",
-                body: "<strong>OFFENSIVE:</strong> Kali Linux, Nmap vulnerability scanning, and isolated testing via VirtualBox.<br><br><strong>DEVELOPMENT:</strong> C++, JavaScript, and mobile app logic architecture.<br><br><strong>ADMIN:</strong> Expert documentation and scheduling via full MS Office Suite."
-            },
-            "PROJECT_DEV": {
-                title: "// DATA_LOG: IN-DEVELOPMENT_ASSETS",
-                body: "<strong>HUNTER_LOG_POSE:</strong> Fitness application gamifying physical conditioning with Bounty/XP systems and pixel art progression.<br><br><strong>COMPOSED_CONQUEST:</strong> Digital platform focused on self-discipline and mindset engineering.<br><br><strong>AMAZON_ENGINE:</strong> Affiliate infrastructure for niche product link distribution."
-            },
-            "FIELD_OPS": {
-                title: "// DATA_LOG: OPERATIONAL_HISTORY",
-                body: "<strong>FOUNDEVER (2025):</strong> TSR for North American tech; hardware/network diagnostics.<br><br><strong>CONCENTRIX (2019-2023):</strong> Advisor for international representative support; 100% resolution approval record.<br><br><strong>GIFT:</strong> NGO administrator managing outreach and community volunteer coordination."
-            },
-            "MILESTONES": {
-                title: "// DATA_LOG: VERIFIED_TRAITS",
-                body: "<strong>ACADEMIC:</strong> B.S. in Computer Science (Major in Application Development) from University of Makati (UMAK).<br><br><strong>CERTS:</strong> IBM Cybersecurity Fundamentals; TESDA Front Office Service; upcoming NC III (April 2026)."
-            },
-            "MARKET_MONITOR": {
-                title: "// DATA_LOG: INTEL_STREAMS",
-                body: "<strong>COLLECTIBLES:</strong> Market monitoring for One Piece TCG (PRB-02, OP-14) and 1990s Michael Jordan basketball card inserts.<br><br><strong>LIFESTYLE:</strong> Home baking exploration, specifically perfecting air fryer cookie recipes for optimal texture."
-            },
-            "PHYS_COND": {
-                title: "// DATA_LOG: BIOMETRIC_GOALS",
-                body: "<strong>OBJECTIVE:</strong> Meeting elite physical standards for professional entry into national security forces by 2030.<br><br><strong>TRAINING:</strong> Specialized focus on endurance running and functional strength building."
-            },
-            "STATUS_RADAR": {
-                title: "// DATA_LOG: PSYCHE_RADAR",
-                body: "<strong>COMPOSURE:</strong> 100%<br><strong>DE-ESCALATION:</strong> 95%<br><strong>NET_DIAGS:</strong> 90%<br><strong>GAMIFICATION:</strong> 85%<br><strong>VULN_SCANNING:</strong> 80%"
-            }
-        };
+<!-- HUD -->
+<div class="tactical-hud" id="hud" style="display:none">
+    <p>LOCATION: PITOGO_TAGUIG</p>
+    <p id="uptime">UPTIME: 00:00:00</p>
+    <p>LATENCY: <span id="ping-val">12</span>ms</p>
+    <button class="hud-btn" onclick="openTerminal()">[ TERMINAL ]</button>
+    <button class="hud-btn" id="hud-copy" onclick="copyEmail()">[ COPY_EMAIL ]</button>
+</div>
 
-        function spawnHireMe(e) {
-            const particle = document.createElement('div');
-            particle.className = 'hire-particle';
-            particle.innerText = 'HIRE ME PLEASE';
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = 120 + Math.random() * 150;
-            const targetX = Math.cos(angle) * velocity;
-            const targetY = Math.sin(angle) * velocity;
-            particle.style.left = e.clientX + 'px';
-            particle.style.top = e.clientY + 'px';
-            document.body.appendChild(particle);
-            particle.animate([
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${targetX}px, ${targetY}px) scale(1.1)`, opacity: 0 }
-            ], { duration: 2000, easing: 'ease-out', fill: 'forwards' });
-            setTimeout(() => particle.remove(), 2000);
-        }
+<script>
+const intelData = {
+    CORE_PROFILE:{title:"// DATA_LOG: SUBJECT_DNA",body:"<strong>NAME:</strong> Josiah Asa Anota.<br><br><strong>AGE:</strong> 25 years old. Taguig City, Philippines.<br><br><strong>SPECIALIZATION:</strong> AI Automation, Workflow Engineering, Brand Architecture.<br><br><strong>VITAL_SIGNS:</strong> Known for extreme composure under technical fire. Navigated Meta API OAuth hell, Docker containerization errors, and webhook architecture from scratch — without formal training.<br><br><strong>2030_OBJECTIVE:</strong> National Security service. Everything built now is preparation."},
+    TECH_ARSENAL:{title:"// DATA_LOG: WEAPONRY_SPECS",body:"<strong>AI & AUTOMATION:</strong> Gemini 2.5 Flash API, n8n self-hosted workflows, Make.com cloud scenarios, webhook architecture, REST API integration.<br><br><strong>INFRASTRUCTURE:</strong> Docker containerization on Windows, WSL2, self-hosted tools, GitHub Pages deployment.<br><br><strong>SOCIAL APIS:</strong> Meta Graph API, Instagram Business API, OAuth token management, Facebook Page API.<br><br><strong>WEB:</strong> HTML5, CSS3, JavaScript — two live deployed projects.<br><br><strong>CYBER OPS:</strong> Kali Linux, Nmap vulnerability scanning, VirtualBox isolated testing, IBM Cybersecurity certified."},
+    PROJECT_DEV:{title:"// DATA_LOG: IN-DEVELOPMENT_ASSETS",body:"<strong>COMPOSED_CONQUEST:</strong> Full AI-automated self-improvement brand. n8n + Gemini AI generates faith-driven content → Make.com → auto-posts to Instagram, TikTok, Threads, Facebook, Reddit daily. Amazon Associates monetized. GitHub Pages landing page with affiliate links. Built in 48 hours at ₱0 cost.<br><br><strong>HUNTER_LOG_POSE:</strong> Fitness gamification app with Bounty/XP mechanics and pixel art progression. Solo project.<br><br><strong>RESUME_DOSSIER:</strong> This interactive portfolio — terminal emulator, matrix rain, deploy animation, radar chart, GitHub API, Konami easter egg. Vanilla HTML/CSS/JS. Deployed on GitHub Pages."},
+    AUTOMATION_OPS:{title:"// DATA_LOG: AUTOMATION_PIPELINE",body:"<strong>PIPELINE BUILT:</strong> Full end-to-end AI content automation from zero in under 48 hours.<br><br><strong>TECH STACK:</strong><br>→ n8n (self-hosted via Docker on Windows)<br>→ Gemini 2.5 Flash AI (content generation)<br>→ Make.com (cloud automation, 24/7)<br>→ Meta Graph API (Instagram posting)<br><br><strong>PLATFORMS LIVE:</strong> Instagram, Facebook, TikTok, Threads, Reddit.<br><br><strong>MONETIZATION:</strong> Amazon Associates approved. Wise USD payment pipeline. GitHub Pages site with affiliate links live.<br><br><strong>TOTAL COST:</strong> ₱0. Built entirely on free tiers.<br><br><strong>BUILD TIME:</strong> 48 hours."},
+    FIELD_OPS:{title:"// DATA_LOG: OPERATIONAL_HISTORY",body:"<strong>FOUNDEVER (2025):</strong> Technical Support Representative for North American clients. Hardware and network diagnostics. High-pressure de-escalation scenarios.<br><br><strong>CONCENTRIX (2019–2023):</strong> Advisor for international representative support. Maintained 100% resolution approval rating across tenure.<br><br><strong>GIFT (NGO):</strong> Administrator managing outreach coordination and community volunteer programs."},
+    MILESTONES:{title:"// DATA_LOG: VERIFIED_CREDENTIALS",body:"<strong>ACADEMIC:</strong> B.S. Computer Science — Major in Application Development, University of Makati (UMAK).<br><br><strong>IBM CERT:</strong> Cybersecurity Fundamentals — IBM verified.<br><br><strong>TESDA NC III:</strong> Incoming certification, April 2026.<br><br><strong>SELF-BUILT:</strong> Two live deployed projects, one monetized brand, one interactive portfolio — all self-taught using AI-assisted learning in under 30 days."},
+    CAREER_INTEL:{title:"// DATA_LOG: CAREER_TARGETS",body:"<strong>PRIMARY — Automation Specialist:</strong> ₱40,000–₱80,000/mo. n8n, Make.com, Zapier, AI APIs. Already demonstrated with ComposedConquest.<br><br><strong>HIGH VALUE — AI Prompt Engineer:</strong> $30–$80/hr remote. ComposedConquest content prompt is live portfolio proof.<br><br><strong>FREELANCE — AI Consultant:</strong> $25–$60/hr Upwork/Fiverr. Service: 'I build automated AI content pipelines.' Already done it.<br><br><strong>30-DAY PLAN:</strong> Finish CC automation → Document GitHub → Create Upwork profile → Apply 5 roles/day → First affiliate income."},
+    GITHUB_STATS:{title:"// DATA_LOG: REPOSITORY_INTEL",body:"Live data fetched from GitHub API.<br><br><strong>KEY REPOS:</strong><br>→ resume-portfolio (this dossier)<br>→ ComposedConquest brand assets<br>→ Hunter Log Pose fitness app<br><br>View all at: <strong>github.com/yosiahh</strong>"},
+    STATUS_RADAR:{title:"// DATA_LOG: PSYCHE_RADAR",body:"<strong>AI_PROMPT:</strong> 90% — Production-grade prompts, live results.<br><strong>BRAND_STRAT:</strong> 92% — ComposedConquest built zero-to-live in 48hrs.<br><strong>WORKFLOW_AUTO:</strong> 78% — n8n + Make.com deployed.<br><strong>META_API:</strong> 85% — Survived OAuth token hell. Twice.<br><strong>DOCKER:</strong> 72% — Self-hosted n8n on Windows.<br><strong>HTML_CSS_JS:</strong> 65% — Two live deployed projects."},
+    PHYS_COND:{title:"// DATA_LOG: BIOMETRIC_GOALS",body:"<strong>OBJECTIVE:</strong> Meeting elite physical standards for national security forces by 2030.<br><br><strong>TRAINING:</strong> Endurance running and functional strength building.<br><br><strong>MINDSET:</strong> The same discipline applied to ComposedConquest is applied to physical conditioning. No shortcuts. Quiet execution."}
+};
 
-        function openDetail(key, element) {
-            const overlay = document.getElementById('detail-overlay');
-            const main = document.getElementById('main-content');
-            main.classList.add('glitch-flash');
-            document.getElementById('detail-title').innerText = intelData[key].title;
-            document.getElementById('detail-body').innerHTML = intelData[key].body;
-            document.getElementById('detail-visual').innerHTML = element.innerHTML;
-            overlay.style.display = 'flex';
-            setTimeout(() => main.classList.remove('glitch-flash'), 250);
-        }
+// MATRIX RAIN
+(function(){
+    const c=document.getElementById('matrix-canvas'),ctx=c.getContext('2d');
+    function resize(){c.width=window.innerWidth;c.height=window.innerHeight}resize();window.addEventListener('resize',resize);
+    const chars='JOSIAH01AUTOMATION_AI_DOCKER_GEMINI_PIPELINE_CONQUER';
+    const fs=12;let cols,drops;
+    function init(){cols=Math.floor(c.width/fs);drops=Array(cols).fill(1)}init();window.addEventListener('resize',init);
+    setInterval(()=>{ctx.fillStyle='rgba(8,12,16,0.05)';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#C9A84C';ctx.font=fs+'px JetBrains Mono';drops.forEach((y,i)=>{ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fs,y*fs);if(y*fs>c.height&&Math.random()>.975)drops[i]=0;drops[i]++})},60);
+})();
 
-        function closeDetail() { document.getElementById('detail-overlay').style.display = 'none'; }
+// BOOT SEQUENCE
+function startBoot(){
+    const splash=document.getElementById('splash-screen'),boot=document.getElementById('boot-screen');
+    splash.classList.add('fade-out');
+    setTimeout(()=>{splash.style.display='none';boot.style.display='flex'},600);
+    const lines=[
+        {text:'JOSIAH_OS v2.0.0 // BOOT SEQUENCE INITIATED',cls:''},
+        {text:'Loading kernel modules...',cls:'dim',d:400},
+        {text:'[OK] Docker daemon: running',cls:'dim',d:700},
+        {text:'[OK] n8n automation engine: online',cls:'dim',d:1000},
+        {text:'[OK] Gemini AI integration: connected',cls:'dim',d:1300},
+        {text:'[OK] Make.com cloud pipeline: active',cls:'dim',d:1600},
+        {text:'[OK] Meta API credentials: loaded',cls:'dim',d:1900},
+        {text:'[OK] GitHub Pages: deployed',cls:'dim',d:2200},
+        {text:'[OK] Amazon Associates: monetized',cls:'dim',d:2500},
+        {text:'WARNING: Subject has 0 formal training. Proceeding anyway.',cls:'err',d:2900},
+        {text:'[OK] ComposedConquest brand: LIVE across 5 platforms',cls:'',d:3300},
+        {text:'All systems nominal. Loading dossier...',cls:'',d:3700},
+        {text:'ACCESS GRANTED. Welcome to JOSIAH_SYSTEM_v2.0.0',cls:'',d:4200},
+    ];
+    lines.forEach(({text,cls,d=0})=>{
+        setTimeout(()=>{
+            const l=document.createElement('div');l.className=`boot-line ${cls}`;l.textContent='> '+text;
+            boot.appendChild(l);boot.scrollTop=boot.scrollHeight;
+        },d);
+    });
+    setTimeout(()=>{boot.style.display='none';enterArchive()},5000);
+}
 
-        function enterArchive() {
-            const splash = document.getElementById('splash-screen');
-            const main = document.getElementById('main-content');
-            splash.classList.add('fade-out');
-            setTimeout(() => {
-                splash.style.display = 'none';
-                main.style.display = 'block';
-                document.getElementById('hud').style.display = 'flex';
-                main.classList.add('glitch-flash');
-                typeWriter("JOSIAH_ANOTA");
-                initChart();
-                startUptime();
-                setTimeout(() => main.classList.remove('glitch-flash'), 250);
-            }, 600);
-        }
+function enterArchive(){
+    const main=document.getElementById('main-content');
+    main.style.display='block';document.getElementById('hud').style.display='flex';
+    main.classList.add('glitch-flash');typeWriter('JOSIAH_ANOTA');
+    initChart();startUptime();startPingFlicker();fetchGitHub();
+    setTimeout(()=>main.classList.remove('glitch-flash'),250);
+}
 
-        function typeWriter(text) {
-            let i = 0; const target = document.getElementById("typewriter");
-            function type() { if (i < text.length) { target.innerHTML += text.charAt(i); i++; setTimeout(type, 80); } }
-            type();
-        }
+function typeWriter(text){
+    let i=0;const t=document.getElementById('typewriter');
+    function type(){if(i<text.length){t.innerHTML+=text.charAt(i);i++;setTimeout(type,80)}}type();
+}
 
-        function startUptime() {
-            let s = 0; setInterval(() => {
-                s++; let h = Math.floor(s/3600); let m = Math.floor((s%3600)/60); let sec = s%60;
-                document.getElementById('uptime').innerText = `UPTIME: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-            }, 1000);
-        }
+function startUptime(){
+    let s=0;setInterval(()=>{s++;let h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+    document.getElementById('uptime').innerText=`UPTIME: ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;},1000);
+}
 
-        function initChart() {
-            const ctx = document.getElementById('skillsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['COMPOSURE', 'DE-ESC', 'NET_DIAGS', 'GAMIFY', 'VULN_SCAN', 'BAKING'],
-                    datasets: [{
-                        data: [100, 95, 90, 85, 80, 75],
-                        backgroundColor: 'rgba(201, 168, 76, 0.2)',
-                        borderColor: '#C9A84C',
-                        borderWidth: 2
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { r: { grid: { color: 'rgba(201, 168, 76, 0.1)' }, angleLines: { color: 'rgba(201, 168, 76, 0.1)' }, ticks: { display: false }, pointLabels: { color: '#888070', font: { family: 'JetBrains Mono', size: 9 } } } }, plugins: { legend: { display: false } } }
-            });
-        }
-        function handleResume() { alert("PERSONNEL_DATA_LOCKED: Decryption key 'josiahanota03@gmail.com' required."); }
-    </script>
+function startPingFlicker(){
+    setInterval(()=>{const el=document.getElementById('ping-val');if(el)el.innerText=Math.floor(8+Math.random()*20)},2000);
+}
+
+function initChart(){
+    const ctx=document.getElementById('skillsChart').getContext('2d');
+    new Chart(ctx,{type:'radar',data:{labels:['AI_PROMPT','BRAND','WORKFLOW','META_API','DOCKER','HTML_CSS'],datasets:[{data:[90,92,78,85,72,65],backgroundColor:'rgba(201,168,76,0.15)',borderColor:'#C9A84C',borderWidth:2,pointBackgroundColor:'#C9A84C',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:'rgba(201,168,76,0.1)'},angleLines:{color:'rgba(201,168,76,0.1)'},ticks:{display:false},pointLabels:{color:'#888070',font:{family:'JetBrains Mono',size:9}},suggestedMin:0,suggestedMax:100}},plugins:{legend:{display:false}},animation:{duration:1500}}});
+}
+
+async function fetchGitHub(){
+    try{
+        const r=await fetch('https://api.github.com/users/yosiahh'),d=await r.json();
+        document.getElementById('gh-stats-card').innerHTML=`
+            <div class="gh-stat"><span>PUBLIC_REPOS</span><span class="gh-val">${d.public_repos}</span></div>
+            <div class="gh-stat"><span>FOLLOWERS</span><span class="gh-val">${d.followers}</span></div>
+            <div class="gh-stat"><span>FOLLOWING</span><span class="gh-val">${d.following}</span></div>
+            <div class="gh-stat"><span>JOINED</span><span class="gh-val">${new Date(d.created_at).getFullYear()}</span></div>
+            <p style="font-size:.55rem;color:var(--text-dim);margin-top:8px">github.com/yosiahh</p>`;
+        intelData.GITHUB_STATS.body=`Live data from GitHub API.<br><br><strong>PUBLIC_REPOS:</strong> ${d.public_repos}<br><strong>FOLLOWERS:</strong> ${d.followers}<br><strong>JOINED:</strong> ${new Date(d.created_at).getFullYear()}<br><br>View all at: <strong>github.com/yosiahh</strong>`;
+    }catch(e){document.getElementById('gh-stats-card').innerHTML='<p style="font-size:.6rem;color:var(--text-dim)">FETCH_ERROR: API_RATE_LIMIT<br>Visit github.com/yosiahh</p>';}
+}
+
+function openDetail(key,el){
+    if(!intelData[key])return;
+    document.getElementById('main-content').classList.add('glitch-flash');
+    document.getElementById('detail-title').innerText=intelData[key].title;
+    document.getElementById('detail-body').innerHTML=intelData[key].body;
+    document.getElementById('detail-visual').innerHTML=el.innerHTML;
+    document.getElementById('detail-overlay').style.display='flex';
+    playClick();setTimeout(()=>document.getElementById('main-content').classList.remove('glitch-flash'),250);
+}
+function closeDetail(){document.getElementById('detail-overlay').style.display='none';playClick();}
+
+function spawnHireMe(e){
+    const msgs=['HIRE ME','AVAILABLE NOW','DEPLOY_CANDIDATE','SKILL_VERIFIED','₱₱₱'];
+    const p=document.createElement('div');p.className='hire-particle';p.innerText=msgs[Math.floor(Math.random()*msgs.length)];
+    const angle=Math.random()*Math.PI*2,vel=120+Math.random()*150;
+    p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';document.body.appendChild(p);
+    p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(angle)*vel}px,${Math.sin(angle)*vel}px) scale(1.1)`,opacity:0}],{duration:2000,easing:'ease-out',fill:'forwards'});
+    setTimeout(()=>p.remove(),2000);
+}
+
+function triggerDeploy(e){
+    spawnHireMe(e);
+    const overlay=document.getElementById('deploy-overlay'),bar=document.getElementById('deploy-bar'),log=document.getElementById('deploy-log');
+    overlay.style.display='flex';playBeep();
+    const steps=[[5,'VALIDATING CANDIDATE...'],[20,'SCANNING SKILL MATRIX...'],[35,'CHECKING AUTOMATION PIPELINE...'],[50,'VERIFYING GITHUB REPOS...'],[65,'RUNNING COMPOSURE DIAGNOSTICS...'],[80,'CONFIRMING AVAILABILITY...'],[95,'FINALIZING DEPLOYMENT...'],[100,'CANDIDATE_READY. INITIATE_CONTACT.']];
+    let i=0;const iv=setInterval(()=>{
+        if(i>=steps.length){clearInterval(iv);setTimeout(()=>{overlay.style.display='none';bar.style.width='0%';copyEmail()},1500);return;}
+        bar.style.width=steps[i][0]+'%';log.innerText=steps[i][1];i++;
+    },400);
+}
+
+// TERMINAL
+const termHistory=[];let histIdx=-1;
+const termCommands={
+    help:()=>`<span class="t-gold">AVAILABLE COMMANDS:</span>
+<span class="t-white">  whoami       </span>— subject identification
+<span class="t-white">  ls           </span>— list all modules
+<span class="t-white">  cat skills   </span>— display tech arsenal
+<span class="t-white">  cat projects </span>— display project log
+<span class="t-white">  cat career   </span>— display career intel
+<span class="t-white">  cat pipeline </span>— display automation ops
+<span class="t-white">  github       </span>— open github profile
+<span class="t-white">  email        </span>— copy email to clipboard
+<span class="t-white">  hire         </span>— initiate hire sequence
+<span class="t-white">  clear        </span>— clear terminal
+<span class="t-white">  exit         </span>— close terminal
+<span class="t-gold">EASTER_EGG:</span> konami code on main screen ↑↑↓↓←→←→BA`,
+    whoami:()=>`<span class="t-gold">JOSIAH_ASA_ANOTA</span>\nAge: 25 | Location: Pitogo, Taguig\nSpecialization: AI_AUTOMATION\nStatus: <span class="t-success">AVAILABLE_FOR_HIRE</span>\nTarget: Remote automation role | 2030: National Security\n"Conquer everything. Quietly."`,
+    ls:()=>`<span class="t-gold">DOSSIER_MODULES:</span>\ndrwxr-xr-x  CORE_PROFILE/\ndrwxr-xr-x  TECH_ARSENAL/\ndrwxr-xr-x  PROJECT_DEV/\ndrwxr-xr-x  AUTOMATION_OPS/\ndrwxr-xr-x  FIELD_OPS/\ndrwxr-xr-x  MILESTONES/\ndrwxr-xr-x  CAREER_INTEL/\ndrwxr-xr-x  GITHUB_STATS/\ndrwxr-xr-x  STATUS_RADAR/\n-rw-------  classified.txt  <span class="t-err">[KONAMI_REQUIRED]</span>`,
+    'cat skills':()=>`<span class="t-gold">TECH_ARSENAL.txt</span>\nAI_PROMPT_ENG ████████████████████ 90%\nBRAND_STRATEGY ████████████████████ 92%\nN8N_AUTOMATION ████████████████░░░░ 78%\nMAKE_COM       ███████████████░░░░░ 77%\nMETA_API       █████████████████░░░ 85%\nDOCKER         ██████████████░░░░░░ 72%\nHTML_CSS_JS    █████████████░░░░░░░ 65%`,
+    'cat projects':()=>`<span class="t-gold">PROJECT_LOG.txt</span>\n[1] COMPOSED_CONQUEST\n    Stack: n8n + Gemini + Make.com + Meta API\n    Status: <span class="t-success">LIVE</span> | Platforms: 5 | Cost: ₱0 | Time: 48hrs\n\n[2] HUNTER_LOG_POSE\n    Stack: HTML/CSS/JS | Status: IN_DEV\n    Fitness gamification with Bounty/XP mechanics\n\n[3] RESUME_DOSSIER\n    Stack: Vanilla JS | Status: <span class="t-success">DEPLOYED</span>\n    You are here.`,
+    'cat career':()=>`<span class="t-gold">CAREER_INTEL.txt</span>\nAUTOMATION_SPEC   ₱40-80K/mo  <span class="t-success">★ PRIMARY</span>\nAI_PROMPT_ENG     $30-80/hr   <span class="t-success">★ HIGH_VALUE</span>\nNO_CODE_DEV       ₱35-70K/mo\nFREELANCE_CONSULT $25-60/hr\n\n30_DAY_PLAN:\n→ Finish CC automation\n→ Document GitHub\n→ Create Upwork profile\n→ Apply 5 roles/day\n→ First affiliate income`,
+    'cat pipeline':()=>`<span class="t-gold">AUTOMATION_OPS.txt</span>\nSTACK:\n  n8n (self-hosted via Docker)\n  └─ Schedule Trigger (04:00 daily)\n  └─ Gemini 2.5 Flash (content gen)\n  └─ HTTP Request → Make.com webhook\n     └─ Instagram Business API\n        └─ Post published ✓\n\nPLATFORMS: Instagram, Facebook, TikTok, Threads, Reddit\nRUNTIME: 24/7 cloud | COST: ₱0 | BUILD: 48hrs`,
+    github:()=>{window.open('https://github.com/yosiahh','_blank');return'<span class="t-success">Opening github.com/yosiahh...</span>'},
+    email:()=>{copyEmail();return'<span class="t-success">Email copied: josiahanota03@gmail.com</span>'},
+    hire:()=>{setTimeout(()=>triggerDeploy({clientX:window.innerWidth/2,clientY:window.innerHeight/2}),500);closeTerminal();return'<span class="t-gold">INITIATING HIRE SEQUENCE...</span>'},
+    clear:()=>{document.getElementById('terminal-output').innerHTML='';return null},
+    exit:()=>{closeTerminal();return null}
+};
+
+function openTerminal(){
+    document.getElementById('terminal-overlay').style.display='flex';
+    const out=document.getElementById('terminal-output');
+    if(!out.innerHTML){printTerminal('<span class="t-gold">JOSIAH_OS TERMINAL v2.0 // TYPE "help" FOR COMMANDS</span>');printTerminal('<span class="t-gold">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>');}
+    setTimeout(()=>document.getElementById('terminal-input').focus(),100);playClick();
+}
+
+function openTerminalFromSplash(){
+    document.getElementById('splash-screen').classList.add('fade-out');
+    setTimeout(()=>{document.getElementById('splash-screen').style.display='none';enterArchive();setTimeout(openTerminal,300)},600);
+}
+
+function closeTerminal(){document.getElementById('terminal-overlay').style.display='none';playClick();}
+
+function printTerminal(html){
+    const out=document.getElementById('terminal-output');
+    const line=document.createElement('div');line.innerHTML=html;out.appendChild(line);out.scrollTop=out.scrollHeight;
+}
+
+document.getElementById('terminal-input').addEventListener('keydown',function(e){
+    if(e.key==='Enter'){
+        const cmd=this.value.trim().toLowerCase();if(!cmd)return;
+        termHistory.unshift(cmd);histIdx=-1;
+        printTerminal(`<span class="t-gold">josiah@dossier:~$</span> <span class="t-white">${cmd}</span>`);
+        if(termCommands[cmd]){const r=termCommands[cmd]();if(r)printTerminal(r);}
+        else printTerminal(`<span class="t-err">command not found: ${cmd} — type 'help'</span>`);
+        this.value='';
+    }
+    if(e.key==='ArrowUp'){histIdx=Math.min(histIdx+1,termHistory.length-1);this.value=termHistory[histIdx]||'';}
+    if(e.key==='ArrowDown'){histIdx=Math.max(histIdx-1,-1);this.value=histIdx>=0?termHistory[histIdx]:'';}
+});
+
+function copyEmail(){
+    navigator.clipboard.writeText('josiahanota03@gmail.com').then(()=>{
+        ['copy-email-btn','hud-copy'].forEach(id=>{
+            const el=document.getElementById(id);if(!el)return;
+            const orig=el.innerText;el.innerText='[ EMAIL_COPIED ✓ ]';el.classList.add('copy-success');
+            setTimeout(()=>{el.innerText=orig;el.classList.remove('copy-success')},2000);
+        });playBeep();
+    }).catch(()=>{alert('Email: josiahanota03@gmail.com')});
+}
+
+function showTooltip(e,title,desc){
+    const tip=document.getElementById('skill-tooltip');
+    tip.innerHTML=`<strong style="color:var(--gold)">${title}</strong><br>${desc}`;
+    tip.style.left=(e.clientX+15)+'px';tip.style.top=(e.clientY-10)+'px';tip.style.opacity='1';
+}
+function hideTooltip(){document.getElementById('skill-tooltip').style.opacity='0';}
+document.addEventListener('mousemove',e=>{
+    const tip=document.getElementById('skill-tooltip');
+    if(tip.style.opacity==='1'){tip.style.left=(e.clientX+15)+'px';tip.style.top=(e.clientY-10)+'px';}
+});
+
+// SOUND
+let audioCtx;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playClick(){try{const c=getAudio(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='square';o.frequency.value=800;g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.08);o.start();o.stop(c.currentTime+.08);}catch(e){}}
+function playBeep(){try{const c=getAudio();[440,550,660].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const t=c.currentTime+i*.1;g.gain.setValueAtTime(.08,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.start(t);o.stop(t+.15);});}catch(e){}}
+
+// KONAMI
+const konamiSeq=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiIdx=0;
+document.addEventListener('keydown',e=>{
+    if(e.key===konamiSeq[konamiIdx]){konamiIdx++;if(konamiIdx===konamiSeq.length){konamiIdx=0;playBeep();document.getElementById('konami-overlay').style.display='flex';}}
+    else konamiIdx=0;
+});
+
+function handleResume(){playClick();alert("PERSONNEL_DATA_LOCKED\nDecryption key: josiahanota03@gmail.com\n\nOr type 'email' in the terminal.");}
+document.addEventListener('click',()=>{try{getAudio().resume();}catch(e){}});
+</script>
 </body>
 </html>

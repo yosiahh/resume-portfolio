@@ -30,7 +30,65 @@
         @keyframes deployPulse{0%,100%{box-shadow:0 0 5px var(--gold)}50%{box-shadow:0 0 25px var(--gold),0 0 50px var(--gold-glow)}}
         .glitch-flash{animation:glitch-shake .25s ease-in-out;filter:brightness(1.4)}
         .fade-out{opacity:0;pointer-events:none}
-        .hire-particle{position:fixed;pointer-events:none;color:var(--gold);font-family:'Unbounded';font-weight:bold;font-size:.7rem;z-index:30000;text-shadow:0 0 10px var(--gold-glow);white-space:nowrap}
+        .hire-particle{position:fixed;pointer-events:none;color:var(--gold);font-family:'Unbounded';font-weight:bold;font-size:.75rem;z-index:30000;text-shadow:0 0 10px var(--gold-glow),0 0 20px rgba(201,168,76,0.5);white-space:nowrap;transform-origin:center center}
+
+        /* MAIN PAGE MATRIX */
+        #main-matrix-canvas{position:fixed;inset:0;z-index:0;opacity:.07;pointer-events:none}
+
+        /* WANTED POSTER MODAL */
+        #wanted-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:60000;display:none;justify-content:center;align-items:center;padding:20px}
+        .wanted-poster{position:relative;background:#080C10;border:3px solid var(--gold);max-width:420px;width:100%;padding:0;font-family:'JetBrains Mono',monospace;box-shadow:0 0 60px rgba(201,168,76,.4),inset 0 0 60px rgba(0,0,0,.5);animation:zoomIn .3s ease-out}
+        .wanted-poster::before{content:'';position:absolute;inset:6px;border:1px solid rgba(201,168,76,.3);pointer-events:none;z-index:1}
+        .wanted-poster::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(201,168,76,.015) 2px,rgba(201,168,76,.015) 4px);pointer-events:none;z-index:1}
+        .poster-header{background:var(--gold);color:#000;text-align:center;padding:12px 20px 8px;position:relative}
+        .poster-header-title{font-family:'Unbounded';font-size:1.6rem;font-weight:900;letter-spacing:6px;line-height:1}
+        .poster-header-sub{font-family:'Rajdhani';font-size:.7rem;letter-spacing:4px;font-weight:700;margin-top:4px;opacity:.7}
+        .poster-body{padding:20px;position:relative}
+        .poster-photo-area{border:2px solid var(--gold);width:140px;height:140px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:rgba(201,168,76,.05);position:relative;overflow:hidden;box-shadow:0 0 20px var(--gold-glow)}
+        .poster-photo-area::after{content:'SUBJECT_ID_7749';position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:.4rem;color:var(--gold);letter-spacing:2px;opacity:.5}
+        .poster-photo-scan{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scan-line 2s linear infinite;opacity:.6}
+        @keyframes scan-line{0%{top:0}100%{top:100%}}
+        .poster-name{font-family:'Unbounded';font-size:1.1rem;color:var(--gold);text-align:center;letter-spacing:3px;margin-bottom:4px;text-shadow:0 0 15px var(--gold-glow)}
+        .poster-alias{font-size:.5rem;color:var(--text-dim);text-align:center;letter-spacing:3px;margin-bottom:14px}
+        .poster-status-bar{display:flex;justify-content:center;gap:12px;margin-bottom:16px}
+        .poster-status-badge{border:1px solid var(--gold);padding:4px 12px;font-size:.55rem;letter-spacing:3px;font-weight:700;font-family:'Rajdhani';position:relative}
+        .poster-status-badge.dead{color:#FF4444;border-color:#FF4444;text-decoration:line-through;opacity:.5}
+        .poster-status-badge.hired{color:#4CAF50;border-color:#4CAF50;animation:deployPulse 1.5s infinite}
+        .poster-divider{border:none;border-top:1px solid rgba(201,168,76,.2);margin:12px 0}
+        .poster-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+        .poster-stat{font-size:.5rem;color:var(--text-dim)}
+        .poster-stat span{color:var(--gold);display:block;font-size:.6rem;font-weight:bold}
+        .poster-bounty-label{font-size:.5rem;color:var(--text-dim);text-align:center;letter-spacing:3px}
+        .poster-bounty-amount{font-family:'Unbounded';font-size:1.4rem;color:var(--bounty-red);text-align:center;text-shadow:0 0 20px rgba(255,68,68,.5);animation:pulse 1.5s infinite}
+        .poster-bounty-sub{font-size:.45rem;color:var(--text-dim);text-align:center;letter-spacing:2px;margin-top:2px}
+        .poster-footer{background:rgba(201,168,76,.05);border-top:1px solid rgba(201,168,76,.2);padding:14px 20px;display:flex;flex-direction:column;gap:8px;align-items:center}
+        .poster-hire-btn{background:var(--gold);color:#000;border:none;font-family:'Unbounded';font-size:.65rem;padding:10px 28px;cursor:pointer;letter-spacing:3px;font-weight:900;transition:.2s;width:100%;text-transform:uppercase}
+        .poster-hire-btn:hover{background:#fff8dc;box-shadow:0 0 20px var(--gold)}
+        .poster-close-btn{background:none;border:1px solid rgba(201,168,76,.3);color:var(--text-dim);font-family:'JetBrains Mono';font-size:.55rem;padding:6px 20px;cursor:pointer;letter-spacing:2px;transition:.2s;width:100%}
+        .poster-close-btn:hover{border-color:var(--gold);color:var(--gold)}
+        .poster-warning{font-size:.45rem;color:var(--text-dim);letter-spacing:2px;text-align:center;margin-top:4px;opacity:.6}
+        .poster-corner{position:absolute;width:14px;height:14px;z-index:2}
+        .poster-corner.tl{top:10px;left:10px;border-top:2px solid var(--gold);border-left:2px solid var(--gold)}
+        .poster-corner.tr{top:10px;right:10px;border-top:2px solid var(--gold);border-right:2px solid var(--gold)}
+        .poster-corner.bl{bottom:10px;left:10px;border-bottom:2px solid var(--gold);border-left:2px solid var(--gold)}
+        .poster-corner.br{bottom:10px;right:10px;border-bottom:2px solid var(--gold);border-right:2px solid var(--gold)}
+
+        /* HIRED CONFIRM */
+        #hired-confirm{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:70000;display:none;justify-content:center;align-items:center;padding:20px}
+        .hired-confirm-box{background:var(--surface);border:2px solid var(--gold);padding:40px 30px;max-width:360px;width:100%;text-align:center;animation:zoomIn .3s ease-out;box-shadow:0 0 40px var(--gold-glow)}
+        .hired-confirm-title{font-family:'Unbounded';font-size:1rem;color:var(--gold);letter-spacing:3px;margin-bottom:8px}
+        .hired-confirm-sub{font-size:.6rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:24px;line-height:1.8}
+        .hired-confirm-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+        .hired-yes-btn{background:var(--gold);color:#000;border:none;font-family:'Unbounded';font-size:.6rem;padding:10px 20px;cursor:pointer;letter-spacing:2px;transition:.2s;font-weight:900}
+        .hired-yes-btn:hover{background:#fff8dc;box-shadow:0 0 15px var(--gold)}
+        .hired-no-btn{background:none;border:1px solid var(--gold-glow);color:var(--text-dim);font-family:'JetBrains Mono';font-size:.6rem;padding:10px 20px;cursor:pointer;letter-spacing:2px;transition:.2s}
+        .hired-no-btn:hover{border-color:var(--gold);color:var(--gold)}
+        #hired-final{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:80000;display:none;justify-content:center;align-items:center;flex-direction:column;gap:16px;padding:20px;text-align:center}
+        .hired-final-title{font-family:'Unbounded';font-size:clamp(1.2rem,5vw,2rem);color:var(--gold);letter-spacing:4px;animation:textFlicker 2s infinite}
+        .hired-final-sub{font-size:.65rem;color:var(--text-dim);letter-spacing:3px;max-width:400px;line-height:2}
+        .no-backsies{font-family:'Unbounded';font-size:.55rem;color:var(--bounty-red);letter-spacing:3px;margin-top:8px;animation:pulse 1s infinite}
+        .hired-close-btn{background:none;border:1px solid var(--gold);color:var(--gold);font-family:'JetBrains Mono';font-size:.55rem;padding:8px 20px;cursor:pointer;letter-spacing:2px;margin-top:10px;transition:.2s}
+        .hired-close-btn:hover{background:var(--gold);color:#000}
 
         /* SPLASH */
         #splash-screen{position:fixed;inset:0;background:radial-gradient(circle at center,#161B22 0%,#080C10 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;transition:.6s ease-in-out;overflow:hidden}
@@ -41,6 +99,7 @@
         .menu-btn::after{content:"DECRYPTING...";position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--gold);color:#000;display:flex;align-items:center;padding-left:18px;transition:.4s cubic-bezier(.19,1,.22,1);font-weight:800}
         .menu-btn:hover::after{left:0}.menu-btn:hover{padding-left:30px}
         #matrix-canvas{position:absolute;inset:0;z-index:0;opacity:.15}
+        #main-matrix-canvas{position:fixed;inset:0;z-index:0;opacity:.07;pointer-events:none}
 
         /* BOOT */
         #boot-screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;justify-content:center;padding:40px;z-index:9998;font-size:.75rem;line-height:2;overflow-y:auto}
@@ -67,7 +126,7 @@
         #terminal-input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'JetBrains Mono';font-size:.75rem;caret-color:var(--gold)}
 
         /* MAIN */
-        #main-content{display:none;padding:20px;max-width:1400px;margin:0 auto;min-height:100vh}
+        #main-content{display:none;padding:20px;max-width:1400px;margin:0 auto;min-height:100vh;position:relative;z-index:1}
         .header{border-bottom:2px solid var(--gold);padding-bottom:20px;margin-bottom:30px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px}
         .header h1{font-size:clamp(1.4rem,4vw,2rem);color:var(--gold)}
         .header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -109,7 +168,7 @@
         .gh-loading{color:var(--text-dim);font-size:.6rem;animation:pulse 1.5s infinite}
 
         /* HUD */
-        .tactical-hud{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;flex-wrap:wrap;gap:4px;padding:8px 10px;background:rgba(8,12,16,.95);font-family:'JetBrains Mono';font-size:.6rem;color:var(--gold);border-top:1px solid var(--gold-glow);z-index:10}
+        .tactical-hud{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;flex-wrap:wrap;gap:4px;padding:8px 10px;background:rgba(8,12,16,.95);font-family:'JetBrains Mono';font-size:.6rem;color:var(--gold);border-top:1px solid var(--gold-glow);z-index:100}
         .bounty-amount{color:var(--bounty-red);font-weight:900;animation:pulse 2s infinite;cursor:pointer}
         .hud-btn{background:none;border:none;color:var(--gold);font-family:'JetBrains Mono';font-size:.6rem;cursor:pointer;letter-spacing:1px;padding:0;transition:.2s}
         .hud-btn:hover{color:#fff;text-shadow:0 0 8px var(--gold)}
@@ -121,6 +180,14 @@
         .konami-text{font-size:.8rem;color:var(--text-dim);max-width:500px;line-height:1.8}
         .konami-close{margin-top:20px;background:none;border:1px solid var(--gold);color:var(--gold);padding:10px 24px;font-family:'JetBrains Mono';cursor:pointer;letter-spacing:2px;transition:.2s}
         .konami-close:hover{background:var(--gold);color:#000}
+
+        /* KONAMI PROGRESS HUD */
+        #konami-progress{position:fixed;bottom:40px;right:16px;z-index:50000;display:none;flex-direction:column;align-items:flex-end;gap:4px;pointer-events:none}
+        .kp-label{font-size:.45rem;color:var(--text-dim);letter-spacing:3px;font-family:'JetBrains Mono'}
+        .kp-dots{display:flex;gap:5px;align-items:center}
+        .kp-dot{width:6px;height:6px;border:1px solid rgba(201,168,76,.3);border-radius:50%;transition:.15s}
+        .kp-dot.active{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px var(--gold)}
+        .kp-dot.done{background:rgba(201,168,76,.3);border-color:rgba(201,168,76,.2)}
 
         /* MOBILE */
         @media(max-width:600px){
@@ -141,6 +208,7 @@
 
 <div class="skill-tooltip" id="skill-tooltip"></div>
 <canvas id="matrix-canvas"></canvas>
+<canvas id="main-matrix-canvas"></canvas>
 
 <!-- SPLASH -->
 <div id="splash-screen">
@@ -178,13 +246,13 @@
 
 <!-- KONAMI -->
 <div id="konami-overlay">
-    <div class="konami-title">⚔️ CLASSIFIED_DOSSIER ⚔️</div>
+    <div class="konami-title">// CLASSIFIED_DOSSIER //</div>
     <div class="konami-text">
         You found the hidden file.<br><br>
         <span style="color:var(--gold)">TRUTH_LOG:</span> This entire portfolio was built in under 72 hours using nothing but a keyboard, AI tools, and the refusal to accept limitations as final.<br><br>
         No degree required. No permission granted. Just quiet, relentless execution.<br><br>
         <span style="color:var(--gold)">"Conquer everything. Quietly."</span><br><br>
-        — If you're a recruiter reading this, you just found someone who builds things that work. The rest is just paperwork. 📄
+        — If you're a recruiter reading this, you just found someone who builds things that work. The rest is just paperwork.
     </div>
     <button class="konami-close" onclick="document.getElementById('konami-overlay').style.display='none'">[ CLOSE_FILE ]</button>
 </div>
@@ -213,9 +281,10 @@
         <div class="header-actions">
             <button class="action-btn" onclick="openTerminal()">[ TERMINAL ]</button>
             <button class="action-btn" id="copy-email-btn" onclick="copyEmail()">[ COPY_EMAIL ]</button>
-            <div style="text-align:right;cursor:pointer" onclick="triggerDeploy(event)">
+            <div style="text-align:right;cursor:pointer" onclick="openWantedPoster()">
                 <p style="font-size:.55rem;color:var(--text-dim);letter-spacing:1px">WANTED // DEAD OR HIRED</p>
                 <p class="bounty-amount" style="font-size:clamp(.9rem,3vw,1.2rem)">฿30,000,000—</p>
+                <p style="font-size:.45rem;color:var(--text-dim);letter-spacing:1px;margin-top:2px">[ CLICK TO VIEW DOSSIER ]</p>
             </div>
         </div>
     </header>
@@ -331,6 +400,91 @@
     </div>
 </div>
 
+<!-- WANTED POSTER MODAL -->
+<div id="wanted-modal" onclick="if(event.target==this)closeWantedPoster()">
+    <div class="wanted-poster">
+        <div class="poster-corner tl"></div>
+        <div class="poster-corner tr"></div>
+        <div class="poster-corner bl"></div>
+        <div class="poster-corner br"></div>
+        <div class="poster-header">
+            <div class="poster-header-title">WANTED</div>
+            <div class="poster-header-sub">DEAD OR HIRED // CLASSIFIED_DOSSIER</div>
+        </div>
+        <div class="poster-body">
+            <div class="poster-photo-area">
+                <div class="poster-photo-scan"></div>
+                <div style="text-align:center;line-height:1.4">
+                    <div style="font-size:.5rem;color:var(--gold);letter-spacing:1px;opacity:.6">SUBJECT_SCAN</div>
+                    <div style="font-size:.65rem;color:var(--gold);font-family:'JetBrains Mono';margin-top:6px;opacity:.8">[ J.A.A ]</div>
+                    <div style="font-size:.4rem;color:var(--text-dim);margin-top:4px;letter-spacing:2px">ID: NODE_7749</div>
+                </div>
+            </div>
+            <div class="poster-name">JOSIAH ASA ANOTA</div>
+            <div class="poster-alias">// A.K.A. "THE_AUTOMATOR" // NODE_7749 //</div>
+            <div class="poster-status-bar">
+                <div class="poster-status-badge dead">DEAD</div>
+                <div class="poster-status-badge hired">HIRED</div>
+            </div>
+            <hr class="poster-divider">
+            <div class="poster-stats">
+                <div class="poster-stat">DESIGNATION<span>AI_AUTOMATION</span></div>
+                <div class="poster-stat">AGE<span>25_CYCLES</span></div>
+                <div class="poster-stat">LOCATION<span>TAGUIG, PH</span></div>
+                <div class="poster-stat">STATUS<span style="color:#4CAF50">AVAILABLE</span></div>
+                <div class="poster-stat">THREAT_LEVEL<span style="color:var(--bounty-red)">MAXIMUM</span></div>
+                <div class="poster-stat">TARGET<span>REMOTE_ROLE</span></div>
+            </div>
+            <hr class="poster-divider">
+            <div class="poster-bounty-label">// REWARD //</div>
+            <div class="poster-bounty-amount">฿30,000,000</div>
+            <div class="poster-bounty-sub">FOR SUCCESSFUL RECRUITMENT // NO QUESTIONS ASKED</div>
+            <hr class="poster-divider">
+            <p style="font-size:.45rem;color:var(--text-dim);letter-spacing:1px;text-align:center;line-height:1.8">ARMED WITH: AI TOOLS / DOCKER / META API / GEMINI<br>LAST SEEN: BUILDING AUTOMATION PIPELINES AT 4AM<br>APPROACH WITH: JOB OFFER</p>
+        </div>
+        <div class="poster-footer">
+            <button class="poster-hire-btn" onclick="closeWantedPoster();showHiredConfirm()">[ HIRED ]</button>
+            <button class="poster-close-btn" onclick="closeWantedPoster()">[ CLOSE_DOSSIER ]</button>
+            <div class="poster-warning">⚠ SUBJECT IS HIGHLY AUTONOMOUS. PROCEED WITH CAUTION.</div>
+        </div>
+    </div>
+</div>
+
+<!-- HIRED CONFIRM -->
+<div id="hired-confirm">
+    <div class="hired-confirm-box">
+        <div class="hired-confirm-title">⚠ CONFIRM HIRE?</div>
+        <div class="hired-confirm-sub">
+            WARNING: This action is irreversible.<br>
+            Subject will report to duty immediately.<br>
+            Are you absolutely sure?
+        </div>
+        <div class="hired-confirm-btns">
+            <button class="hired-yes-btn" onclick="confirmHired()">YES, HIRE</button>
+            <button class="hired-no-btn" onclick="document.getElementById('hired-confirm').style.display='none';openWantedPoster()">CANCEL</button>
+        </div>
+    </div>
+</div>
+
+<!-- HIRED FINAL -->
+<div id="hired-final">
+    <div class="hired-final-title">// CANDIDATE_DEPLOYED //</div>
+    <div class="hired-final-sub">
+        TRANSACTION COMPLETE.<br>
+        josiah@dossier has been successfully acquired.<br>
+        Reporting for duty: IMMEDIATELY.<br><br>
+        <span style="color:var(--gold)">josiahanota03@gmail.com</span>
+    </div>
+    <div class="no-backsies">[ NO TAKE BACKSIES. EVER. ]</div>
+    <button class="hired-close-btn" onclick="document.getElementById('hired-final').style.display='none'">[ ACKNOWLEDGED ]</button>
+</div>
+
+<!-- KONAMI PROGRESS -->
+<div id="konami-progress">
+    <div class="kp-label">KONAMI_SEQ</div>
+    <div class="kp-dots" id="kp-dots"></div>
+</div>
+
 <!-- HUD -->
 <div class="tactical-hud" id="hud" style="display:none">
     <p>LOCATION: PITOGO_TAGUIG</p>
@@ -354,7 +508,7 @@ const intelData = {
     PHYS_COND:{title:"// DATA_LOG: BIOMETRIC_GOALS",body:"<strong>OBJECTIVE:</strong> Meeting elite physical standards for national security forces by 2030.<br><br><strong>TRAINING:</strong> Endurance running and functional strength building.<br><br><strong>MINDSET:</strong> The same discipline applied to ComposedConquest is applied to physical conditioning. No shortcuts. Quiet execution."}
 };
 
-// MATRIX RAIN
+// MATRIX RAIN - SPLASH (absolute in splash div)
 (function(){
     const c=document.getElementById('matrix-canvas'),ctx=c.getContext('2d');
     function resize(){c.width=window.innerWidth;c.height=window.innerHeight}resize();window.addEventListener('resize',resize);
@@ -362,6 +516,28 @@ const intelData = {
     const fs=12;let cols,drops;
     function init(){cols=Math.floor(c.width/fs);drops=Array(cols).fill(1)}init();window.addEventListener('resize',init);
     setInterval(()=>{ctx.fillStyle='rgba(8,12,16,0.05)';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#C9A84C';ctx.font=fs+'px JetBrains Mono';drops.forEach((y,i)=>{ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fs,y*fs);if(y*fs>c.height&&Math.random()>.975)drops[i]=0;drops[i]++})},60);
+})();
+
+// MATRIX RAIN - MAIN PAGE (fixed, full viewport, always visible behind content)
+(function(){
+    const c=document.getElementById('main-matrix-canvas'),ctx=c.getContext('2d');
+    function resize(){c.width=window.innerWidth;c.height=window.innerHeight}resize();window.addEventListener('resize',resize);
+    const chars='JOSIAH01AUTOMATION_AI_DOCKER_GEMINI_PIPELINE_CONQUER_HIRE_ME_2030';
+    const fs=13;let cols,drops;
+    function init(){cols=Math.floor(c.width/fs);drops=Array(cols).fill(()=>Math.random()*-50).map(f=>f())}init();window.addEventListener('resize',init);
+    setInterval(()=>{
+        ctx.fillStyle='rgba(8,12,16,0.04)';ctx.fillRect(0,0,c.width,c.height);
+        ctx.font=fs+'px JetBrains Mono';
+        drops.forEach((y,i)=>{
+            const char=chars[Math.floor(Math.random()*chars.length)];
+            ctx.fillStyle=Math.random()>.97?'#ffffff':'#C9A84C';
+            ctx.globalAlpha=0.6+Math.random()*0.4;
+            ctx.fillText(char,i*fs,y*fs);
+            ctx.globalAlpha=1;
+            if(y*fs>c.height&&Math.random()>.975)drops[i]=Math.random()*-20;
+            drops[i]+=0.5;
+        });
+    },50);
 })();
 
 // BOOT SEQUENCE
@@ -445,12 +621,68 @@ function openDetail(key,el){
 function closeDetail(){document.getElementById('detail-overlay').style.display='none';playClick();}
 
 function spawnHireMe(e){
-    const msgs=['HIRE ME','AVAILABLE NOW','DEPLOY_CANDIDATE','SKILL_VERIFIED','₱₱₱'];
-    const p=document.createElement('div');p.className='hire-particle';p.innerText=msgs[Math.floor(Math.random()*msgs.length)];
-    const angle=Math.random()*Math.PI*2,vel=120+Math.random()*150;
-    p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';document.body.appendChild(p);
-    p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(angle)*vel}px,${Math.sin(angle)*vel}px) scale(1.1)`,opacity:0}],{duration:2000,easing:'ease-out',fill:'forwards'});
-    setTimeout(()=>p.remove(),2000);
+    const msgs=['HIRE ME PLEASE','HIRE ME PLEASE','HIRE ME PLEASE','DEPLOY_CANDIDATE','AVAILABLE NOW','SKILL_VERIFIED','₱₱₱ HIRE ₱₱₱','I NEED A JOB','AUTOMATION_MASTER','PLEASE 🙏','SEND_OFFER.EXE','HIRE_ME.JS'];
+    const p=document.createElement('div');
+    p.className='hire-particle';
+    p.innerText=msgs[Math.floor(Math.random()*msgs.length)];
+    p.style.left=e.clientX+'px';
+    p.style.top=e.clientY+'px';
+    p.style.position='fixed';
+    document.body.appendChild(p);
+
+    // Random flight properties
+    const angle=Math.random()*Math.PI*2;
+    const vel=100+Math.random()*220;
+    const dx=Math.cos(angle)*vel;
+    const dy=Math.sin(angle)*vel;
+    const spin=Math.random()>.5?(Math.random()*720+180):(-(Math.random()*720+180));
+    const scaleEnd=0.3+Math.random()*0.8;
+    const duration=1200+Math.random()*1200;
+    const fontSize=(0.6+Math.random()*0.6)+'rem';
+    p.style.fontSize=fontSize;
+
+    // Pick a random animation style
+    const style=Math.floor(Math.random()*5);
+    let keyframes;
+    if(style===0){
+        // Straight fly + spin
+        keyframes=[
+            {transform:'translate(-50%,-50%) rotate(0deg) scale(1)',opacity:1},
+            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${spin}deg) scale(${scaleEnd})`,opacity:0}
+        ];
+    } else if(style===1){
+        // Wobbly arc
+        const cx=dx*0.5+Math.cos(angle+Math.PI/2)*80;
+        const cy=dy*0.5+Math.sin(angle+Math.PI/2)*80;
+        keyframes=[
+            {transform:'translate(-50%,-50%) scale(1.2) rotate(0deg)',opacity:1,offset:0},
+            {transform:`translate(calc(-50% + ${cx}px),calc(-50% + ${cy}px)) scale(1) rotate(${spin*0.5}deg)`,opacity:.7,offset:0.5},
+            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(.2) rotate(${spin}deg)`,opacity:0,offset:1}
+        ];
+    } else if(style===2){
+        // Flip/roll (Y axis)
+        keyframes=[
+            {transform:'translate(-50%,-50%) perspective(400px) rotateY(0deg) scale(1)',opacity:1},
+            {transform:`translate(calc(-50% + ${dx*0.3}px),calc(-50% + ${dy*0.3}px)) perspective(400px) rotateY(360deg) scale(1.2)`,opacity:.8,offset:.3},
+            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) perspective(400px) rotateY(${spin}deg) scale(.1)`,opacity:0,offset:1}
+        ];
+    } else if(style===3){
+        // Bounce up then fly
+        keyframes=[
+            {transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:0},
+            {transform:`translate(-50%,calc(-50% - 60px)) scale(1.3)`,opacity:1,offset:.15},
+            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(.1) rotate(${spin}deg)`,opacity:0,offset:1}
+        ];
+    } else {
+        // Tumble + shrink
+        keyframes=[
+            {transform:'translate(-50%,-50%) rotate(0deg) skewX(0deg) scale(1)',opacity:1},
+            {transform:`translate(calc(-50% + ${dx*0.4}px),calc(-50% + ${dy*0.4}px)) rotate(${spin*0.4}deg) skewX(20deg) scale(.8)`,opacity:.6,offset:.4},
+            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${spin}deg) skewX(-10deg) scale(0)`,opacity:0,offset:1}
+        ];
+    }
+    p.animate(keyframes,{duration,easing:'cubic-bezier(.2,0,.8,1)',fill:'forwards'});
+    setTimeout(()=>p.remove(),duration+100);
 }
 
 function triggerDeploy(e){
@@ -552,16 +784,98 @@ function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkit
 function playClick(){try{const c=getAudio(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='square';o.frequency.value=800;g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.08);o.start();o.stop(c.currentTime+.08);}catch(e){}}
 function playBeep(){try{const c=getAudio();[440,550,660].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const t=c.currentTime+i*.1;g.gain.setValueAtTime(.08,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.start(t);o.stop(t+.15);});}catch(e){}}
 
-// KONAMI
+// KONAMI - with progress indicator
 const konamiSeq=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
 let konamiIdx=0;
+let konamiTimeout=null;
+
+function buildKpDots(){
+    const wrap=document.getElementById('kp-dots');
+    wrap.innerHTML='';
+    konamiSeq.forEach((_,i)=>{
+        const d=document.createElement('div');
+        d.className='kp-dot'+(i<konamiIdx?' done':'');
+        if(i===konamiIdx)d.classList.add('active');
+        wrap.appendChild(d);
+    });
+}
+
+function updateKonami(newIdx){
+    konamiIdx=newIdx;
+    const prog=document.getElementById('konami-progress');
+    if(konamiIdx>0){
+        prog.style.display='flex';
+        buildKpDots();
+        clearTimeout(konamiTimeout);
+        konamiTimeout=setTimeout(()=>{
+            konamiIdx=0;
+            prog.style.display='none';
+        },3000);
+    } else {
+        prog.style.display='none';
+    }
+}
+
 document.addEventListener('keydown',e=>{
-    if(e.key===konamiSeq[konamiIdx]){konamiIdx++;if(konamiIdx===konamiSeq.length){konamiIdx=0;playBeep();document.getElementById('konami-overlay').style.display='flex';}}
-    else konamiIdx=0;
+    if(['Shift','Control','Alt','Meta','CapsLock','Tab'].includes(e.key))return;
+    const key=e.key.length===1?e.key.toLowerCase():e.key;
+    const expected=konamiSeq[konamiIdx].toLowerCase();
+    if(key===expected){
+        const next=konamiIdx+1;
+        if(next===konamiSeq.length){
+            updateKonami(0);
+            document.getElementById('konami-progress').style.display='none';
+            playBeep();
+            document.getElementById('konami-overlay').style.display='flex';
+        } else {
+            updateKonami(next);
+        }
+    } else {
+        updateKonami(key===konamiSeq[0].toLowerCase()?1:0);
+    }
 });
 
+// HIRE ME PLEASE - fire on empty space clicks only
+document.addEventListener('click',e=>{
+    try{getAudio().resume();}catch(err){}
+    const tag=e.target.tagName.toLowerCase();
+    const interactive=['button','a','input','canvas','select','textarea'];
+    const isInteractive=interactive.includes(tag)||e.target.closest('button,a,input,[onclick],.card,.arsenal-item,.hud-btn,.action-btn,.menu-btn,.wanted-poster,#terminal-overlay,#detail-overlay,#deploy-overlay,#konami-overlay,#wanted-modal,#hired-confirm,#hired-final,#boot-screen');
+    if(!isInteractive&&document.getElementById('main-content').style.display!=='none'){
+        spawnHireMe(e);
+    }
+});
+
+// WANTED POSTER
+function openWantedPoster(){
+    document.getElementById('wanted-modal').style.display='flex';
+    playBeep();
+}
+function closeWantedPoster(){
+    document.getElementById('wanted-modal').style.display='none';
+    playClick();
+}
+function showHiredConfirm(){
+    document.getElementById('hired-confirm').style.display='flex';
+    playBeep();
+}
+function confirmHired(){
+    document.getElementById('hired-confirm').style.display='none';
+    // Spawn a burst of particles across screen
+    for(let i=0;i<12;i++){
+        setTimeout(()=>{
+            spawnHireMe({clientX:Math.random()*window.innerWidth,clientY:Math.random()*window.innerHeight});
+        },i*80);
+    }
+    playBeep();
+    setTimeout(()=>{
+        document.getElementById('hired-final').style.display='flex';
+        copyEmail();
+    },500);
+}
+
 function handleResume(){playClick();alert("PERSONNEL_DATA_LOCKED\nDecryption key: josiahanota03@gmail.com\n\nOr type 'email' in the terminal.");}
-document.addEventListener('click',()=>{try{getAudio().resume();}catch(e){}});
+
 </script>
 </body>
 </html>

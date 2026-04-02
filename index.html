@@ -481,7 +481,7 @@
 
 <!-- KONAMI PROGRESS -->
 <div id="konami-progress">
-    <div class="kp-label">KONAMI_SEQ</div>
+    <div class="kp-label" id="kp-next">NEXT: &uarr;</div>
     <div class="kp-dots" id="kp-dots"></div>
 </div>
 
@@ -784,56 +784,73 @@ function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkit
 function playClick(){try{const c=getAudio(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='square';o.frequency.value=800;g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.08);o.start();o.stop(c.currentTime+.08);}catch(e){}}
 function playBeep(){try{const c=getAudio();[440,550,660].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const t=c.currentTime+i*.1;g.gain.setValueAtTime(.08,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.start(t);o.stop(t+.15);});}catch(e){}}
 
-// KONAMI - with progress indicator
+// KONAMI - bulletproof version
 const konamiSeq=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+const konamiLabels=['\u2191','\u2191','\u2193','\u2193','\u2190','\u2192','\u2190','\u2192','B','A'];
 let konamiIdx=0;
 let konamiTimeout=null;
 
 function buildKpDots(){
     const wrap=document.getElementById('kp-dots');
+    if(!wrap)return;
     wrap.innerHTML='';
     konamiSeq.forEach((_,i)=>{
         const d=document.createElement('div');
-        d.className='kp-dot'+(i<konamiIdx?' done':'');
-        if(i===konamiIdx)d.classList.add('active');
+        d.className='kp-dot';
+        d.title=konamiLabels[i];
+        if(i<konamiIdx)d.classList.add('done');
+        else if(i===konamiIdx)d.classList.add('active');
         wrap.appendChild(d);
     });
+    // Also show current expected key
+    const lbl=document.getElementById('kp-next');
+    if(lbl)lbl.textContent='NEXT: '+konamiLabels[konamiIdx];
 }
 
 function updateKonami(newIdx){
     konamiIdx=newIdx;
     const prog=document.getElementById('konami-progress');
+    if(!prog)return;
     if(konamiIdx>0){
         prog.style.display='flex';
         buildKpDots();
         clearTimeout(konamiTimeout);
-        konamiTimeout=setTimeout(()=>{
-            konamiIdx=0;
-            prog.style.display='none';
-        },3000);
+        konamiTimeout=setTimeout(()=>{konamiIdx=0;prog.style.display='none';},4000);
     } else {
         prog.style.display='none';
     }
 }
 
 document.addEventListener('keydown',e=>{
-    if(['Shift','Control','Alt','Meta','CapsLock','Tab'].includes(e.key))return;
+    // Skip if typing in an input/textarea
+    const active=document.activeElement;
+    if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA'))return;
+    // Skip pure modifier keys
+    if(['Shift','Control','Alt','Meta','CapsLock','Tab','Enter'].includes(e.key))return;
+
     const key=e.key.length===1?e.key.toLowerCase():e.key;
-    const expected=konamiSeq[konamiIdx].toLowerCase();
-    if(key===expected){
+    const expected=konamiSeq[konamiIdx];
+    const expectedNorm=expected.length===1?expected.toLowerCase():expected;
+
+    if(key===expectedNorm){
         const next=konamiIdx+1;
         if(next===konamiSeq.length){
-            updateKonami(0);
-            document.getElementById('konami-progress').style.display='none';
+            // SUCCESS
+            konamiIdx=0;
+            clearTimeout(konamiTimeout);
+            const prog=document.getElementById('konami-progress');
+            if(prog)prog.style.display='none';
             playBeep();
             document.getElementById('konami-overlay').style.display='flex';
         } else {
             updateKonami(next);
         }
     } else {
-        updateKonami(key===konamiSeq[0].toLowerCase()?1:0);
+        // Wrong key — check if it's the first key to give partial credit
+        const firstNorm=konamiSeq[0].length===1?konamiSeq[0].toLowerCase():konamiSeq[0];
+        updateKonami(key===firstNorm?1:0);
     }
-});
+},true); // useCapture=true so we get it before any other handler
 
 // HIRE ME PLEASE - fire on empty space clicks only
 document.addEventListener('click',e=>{
@@ -861,13 +878,26 @@ function showHiredConfirm(){
 }
 function confirmHired(){
     document.getElementById('hired-confirm').style.display='none';
-    // Spawn a burst of particles across screen
     for(let i=0;i<12;i++){
         setTimeout(()=>{
             spawnHireMe({clientX:Math.random()*window.innerWidth,clientY:Math.random()*window.innerHeight});
         },i*80);
     }
     playBeep();
+
+    // Notify via Make.com webhook
+    fetch('https://hook.us2.make.com/u6teffglcqjl8vo2r27ckre1yobmsrkk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            event: 'CANDIDATE_ACQUIRED',
+            timestamp: new Date().toISOString(),
+            message: 'Someone clicked HIRED on your portfolio. Get ready.',
+            source: window.location.href,
+            user_agent: navigator.userAgent
+        })
+    }).catch(()=>{}); // silent fail, don't break the UX
+
     setTimeout(()=>{
         document.getElementById('hired-final').style.display='flex';
         copyEmail();

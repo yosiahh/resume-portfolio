@@ -28,11 +28,12 @@
         @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes bootLine{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
         @keyframes deployPulse{0%,100%{box-shadow:0 0 5px var(--gold)}50%{box-shadow:0 0 25px var(--gold),0 0 50px var(--gold-glow)}}
+        @keyframes scanLine{0%{top:0}100%{top:100%}}
+        @keyframes wip-blink{0%,100%{opacity:1}50%{opacity:.4}}
         .glitch-flash{animation:glitch-shake .25s ease-in-out;filter:brightness(1.4)}
         .fade-out{opacity:0;pointer-events:none}
         .hire-particle{position:fixed;pointer-events:none;color:var(--gold);font-family:'Unbounded';font-weight:bold;font-size:.75rem;z-index:30000;text-shadow:0 0 10px var(--gold-glow),0 0 20px rgba(201,168,76,0.5);white-space:nowrap;transform-origin:center center}
 
-        /* MAIN PAGE MATRIX */
         #main-matrix-canvas{position:fixed;inset:0;z-index:0;opacity:.07;pointer-events:none}
 
         /* WANTED POSTER MODAL */
@@ -46,8 +47,7 @@
         .poster-body{padding:20px;position:relative}
         .poster-photo-area{border:2px solid var(--gold);width:140px;height:140px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:rgba(201,168,76,.05);position:relative;overflow:hidden;box-shadow:0 0 20px var(--gold-glow)}
         .poster-photo-area::after{content:'SUBJECT_ID_7749';position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:.4rem;color:var(--gold);letter-spacing:2px;opacity:.5}
-        .poster-photo-scan{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scan-line 2s linear infinite;opacity:.6}
-        @keyframes scan-line{0%{top:0}100%{top:100%}}
+        .poster-photo-scan{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scanLine 2s linear infinite;opacity:.6}
         .poster-name{font-family:'Unbounded';font-size:1.1rem;color:var(--gold);text-align:center;letter-spacing:3px;margin-bottom:4px;text-shadow:0 0 15px var(--gold-glow)}
         .poster-alias{font-size:.5rem;color:var(--text-dim);text-align:center;letter-spacing:3px;margin-bottom:14px}
         .poster-status-bar{display:flex;justify-content:center;gap:12px;margin-bottom:16px}
@@ -99,7 +99,6 @@
         .menu-btn::after{content:"DECRYPTING...";position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--gold);color:#000;display:flex;align-items:center;padding-left:18px;transition:.4s cubic-bezier(.19,1,.22,1);font-weight:800}
         .menu-btn:hover::after{left:0}.menu-btn:hover{padding-left:30px}
         #matrix-canvas{position:absolute;inset:0;z-index:0;opacity:.15}
-        #main-matrix-canvas{position:fixed;inset:0;z-index:0;opacity:.07;pointer-events:none}
 
         /* BOOT */
         #boot-screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;justify-content:center;padding:40px;z-index:9998;font-size:.75rem;line-height:2;overflow-y:auto}
@@ -137,6 +136,23 @@
         .card:hover{border-color:var(--gold);box-shadow:0 0 15px var(--gold-glow);transform:translateY(-2px)}
         .card h2{font-size:.75rem;margin-bottom:15px;color:var(--gold);letter-spacing:1px}
         .card-badge{position:absolute;top:10px;right:10px;font-size:.55rem;background:var(--gold);color:#000;padding:2px 6px;font-weight:700;letter-spacing:1px}
+        .card-badge.live{background:#4CAF50;color:#000}
+        .card-badge.wip{background:var(--bounty-red);color:#fff;animation:wip-blink 1.5s infinite}
+
+        /* PROJECT LIST ITEMS */
+        .project-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.08);cursor:pointer;transition:.2s;position:relative}
+        .project-row:last-child{border-bottom:none}
+        .project-row:hover{background:rgba(201,168,76,.05);padding-left:8px}
+        .project-row:hover .proj-arrow{opacity:1;transform:translateX(0)}
+        .proj-icon{font-size:1.2rem;width:32px;text-align:center;flex-shrink:0}
+        .proj-info{flex:1}
+        .proj-name{font-family:'Unbounded';font-size:.6rem;color:var(--gold);letter-spacing:1px}
+        .proj-desc{font-size:.5rem;color:var(--text-dim);margin-top:2px;letter-spacing:.5px}
+        .proj-tag{font-size:.45rem;padding:1px 6px;border:1px solid;margin-top:4px;display:inline-block;letter-spacing:1px;font-weight:700}
+        .proj-tag.live{color:#4CAF50;border-color:#4CAF50}
+        .proj-tag.wip{color:var(--bounty-red);border-color:var(--bounty-red);animation:wip-blink 1.5s infinite}
+        .proj-tag.complete{color:var(--gold);border-color:var(--gold)}
+        .proj-arrow{font-size:.7rem;color:var(--gold);opacity:0;transform:translateX(-5px);transition:.2s;flex-shrink:0}
 
         /* DETAIL */
         #detail-overlay{position:fixed;inset:0;background:rgba(8,12,16,.98);backdrop-filter:blur(15px);z-index:10000;display:none;justify-content:center;align-items:center;padding:20px}
@@ -148,6 +164,15 @@
         .detail-body strong{color:var(--gold)}
         .close-btn{position:absolute;top:-40px;right:0;background:transparent;border:1px solid var(--gold-glow);color:var(--gold);font-family:'Rajdhani';cursor:pointer;font-size:.9rem;padding:4px 12px;transition:.2s}
         .close-btn:hover{background:var(--gold);color:#000}
+
+        /* PROJECT DETAIL VISUAL PANE */
+        .proj-visual-pane{background:rgba(201,168,76,.03);border:1px solid rgba(201,168,76,.1);overflow:hidden;max-height:80vh;display:flex;flex-direction:column}
+        .proj-visual-header{padding:10px 16px;border-bottom:1px solid rgba(201,168,76,.1);display:flex;align-items:center;gap:8px;background:rgba(201,168,76,.05);flex-shrink:0}
+        .proj-visual-dot{width:8px;height:8px;border-radius:50%}
+        .proj-visual-title{font-size:.55rem;color:var(--text-dim);letter-spacing:2px;flex:1}
+        .proj-iframe-wrap{flex:1;overflow:hidden;position:relative}
+        .proj-iframe-wrap iframe{width:100%;height:100%;min-height:400px;border:none;display:block}
+        .proj-mockup{flex:1;padding:20px;overflow-y:auto}
 
         /* ARSENAL */
         .arsenal-item{display:flex;align-items:center;gap:15px;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.05);cursor:pointer;transition:.2s}
@@ -167,6 +192,15 @@
         .gh-val{color:var(--gold);font-weight:bold;font-size:.8rem}
         .gh-loading{color:var(--text-dim);font-size:.6rem;animation:pulse 1.5s infinite}
 
+        /* STACK FLOW */
+        .stack-flow{display:flex;flex-direction:column;gap:6px;padding:16px 0}
+        .stack-node{border:1px solid rgba(201,168,76,.3);padding:8px 14px;font-size:.6rem;color:var(--gold);position:relative;background:rgba(201,168,76,.04);display:flex;align-items:center;gap:10px}
+        .stack-node.dim{color:var(--text-dim);border-color:rgba(201,168,76,.1)}
+        .stack-arrow{text-align:center;color:rgba(201,168,76,.4);font-size:.7rem;letter-spacing:2px}
+        .stack-node-icon{font-size:1rem;flex-shrink:0}
+        .stat-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(201,168,76,.2);padding:6px 10px;font-size:.55rem;color:var(--text-dim);margin:4px}
+        .stat-chip span{color:var(--gold);font-weight:bold}
+
         /* HUD */
         .tactical-hud{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;flex-wrap:wrap;gap:4px;padding:8px 10px;background:rgba(8,12,16,.95);font-family:'JetBrains Mono';font-size:.6rem;color:var(--gold);border-top:1px solid var(--gold-glow);z-index:100}
         .bounty-amount{color:var(--bounty-red);font-weight:900;animation:pulse 2s infinite;cursor:pointer}
@@ -180,8 +214,6 @@
         .konami-text{font-size:.8rem;color:var(--text-dim);max-width:500px;line-height:1.8}
         .konami-close{margin-top:20px;background:none;border:1px solid var(--gold);color:var(--gold);padding:10px 24px;font-family:'JetBrains Mono';cursor:pointer;letter-spacing:2px;transition:.2s}
         .konami-close:hover{background:var(--gold);color:#000}
-
-        /* KONAMI PROGRESS HUD */
         #konami-progress{position:fixed;bottom:40px;right:16px;z-index:50000;display:none;flex-direction:column;align-items:flex-end;gap:4px;pointer-events:none}
         .kp-label{font-size:.45rem;color:var(--text-dim);letter-spacing:3px;font-family:'JetBrains Mono'}
         .kp-dots{display:flex;gap:5px;align-items:center}
@@ -257,11 +289,11 @@
     <button class="konami-close" onclick="document.getElementById('konami-overlay').style.display='none'">[ CLOSE_FILE ]</button>
 </div>
 
-<!-- DETAIL -->
+<!-- DETAIL OVERLAY -->
 <div id="detail-overlay" onclick="if(event.target==this)closeDetail()">
     <div class="overlay-content">
         <button class="close-btn" onclick="closeDetail()">[ CLOSE_X ]</button>
-        <div class="overlay-grid">
+        <div class="overlay-grid" id="detail-grid">
             <div id="detail-visual" style="background:var(--surface);padding:20px;border:1px solid var(--gold-glow);overflow-y:auto;max-height:80vh"></div>
             <div class="detail-pane">
                 <h2 id="detail-title" style="color:var(--gold)">// SEGMENT_INTEL</h2>
@@ -326,24 +358,67 @@
             </div>
         </section>
 
-        <section class="card" onclick="openDetail('PROJECT_DEV',this)">
-            <h2>// PROJECT_DEV</h2>
-            <div style="border-left:3px solid var(--gold);padding:10px;background:rgba(201,168,76,.05);margin-bottom:12px">
-                <h3 style="font-size:.7rem;color:var(--gold)">COMPOSED_CONQUEST</h3>
-                <p style="font-size:.55rem;color:var(--text-dim);margin-top:4px">AI-automated brand. 5 platforms. n8n + Gemini + Make.com. Affiliate monetized.</p>
-            </div>
-            <div style="border-left:2px solid var(--gold);padding:10px;background:rgba(201,168,76,.02);margin-bottom:12px">
-                <h3 style="font-size:.7rem;color:var(--gold)">HUNTER_LOG_POSE</h3>
-                <p style="font-size:.55rem;color:var(--text-dim);margin-top:4px">Fitness gamification. Bounty/XP mechanics. Pixel art progression.</p>
-            </div>
-            <div style="border-left:2px solid var(--text-dim);padding:10px">
-                <h3 style="font-size:.7rem">RESUME_DOSSIER</h3>
-                <p style="font-size:.55rem;color:var(--text-dim);margin-top:4px">This portfolio. Terminal. Matrix. Deploy animation. GitHub API. All vanilla JS.</p>
+        <!-- PROJECTS CARD — NEW -->
+        <section class="card" style="grid-column: span 2" id="projects-card">
+            <div class="card-badge live">5 PROJECTS</div>
+            <h2>// PROJECT_FILES</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0 30px">
+
+                <div class="project-row" onclick="openProjectDetail('STRIDE');event.stopPropagation()">
+                    <div class="proj-icon">🏃</div>
+                    <div class="proj-info">
+                        <div class="proj-name">STRIDE</div>
+                        <div class="proj-desc">GPS run tracker with RPG gamification — XP, loot, inventory, leveling system</div>
+                        <span class="proj-tag live">● LIVE</span>
+                    </div>
+                    <div class="proj-arrow">→</div>
+                </div>
+
+                <div class="project-row" onclick="openProjectDetail('AFFHUB');event.stopPropagation()">
+                    <div class="proj-icon">📡</div>
+                    <div class="proj-info">
+                        <div class="proj-name">AFFHUB</div>
+                        <div class="proj-desc">Shopify affiliate automation — AI captions, multi-platform posting, PH peak-time scheduler</div>
+                        <span class="proj-tag complete">◆ COMPLETE</span>
+                    </div>
+                    <div class="proj-arrow">→</div>
+                </div>
+
+                <div class="project-row" onclick="openProjectDetail('COMPOSEDCONQUEST');event.stopPropagation()">
+                    <div class="proj-icon">⚡</div>
+                    <div class="proj-info">
+                        <div class="proj-name">COMPOSED_CONQUEST</div>
+                        <div class="proj-desc">24/7 AI content brand — n8n + Gemini + Make.com posting to 5 platforms autonomously</div>
+                        <span class="proj-tag live">● LIVE</span>
+                    </div>
+                    <div class="proj-arrow">→</div>
+                </div>
+
+                <div class="project-row" onclick="openProjectDetail('CLIPPER');event.stopPropagation()">
+                    <div class="proj-icon">✂️</div>
+                    <div class="proj-info">
+                        <div class="proj-name">HIGHLIGHTS_CLIPPER</div>
+                        <div class="proj-desc">AI-assisted stream clipper — auto-detects highlights, trims, adds subtitles & music, multi-post</div>
+                        <span class="proj-tag wip">⚠ IN_DEV</span>
+                    </div>
+                    <div class="proj-arrow">→</div>
+                </div>
+
+                <div class="project-row" onclick="openProjectDetail('PORTFOLIO');event.stopPropagation()">
+                    <div class="proj-icon">🗂️</div>
+                    <div class="proj-info">
+                        <div class="proj-name">DOSSIER_v2.0</div>
+                        <div class="proj-desc">This portfolio — terminal emulator, matrix rain, GitHub API, Konami easter egg, all vanilla JS</div>
+                        <span class="proj-tag live">● LIVE</span>
+                    </div>
+                    <div class="proj-arrow">→</div>
+                </div>
+
             </div>
         </section>
 
         <section class="card" onclick="openDetail('AUTOMATION_OPS',this)">
-            <div class="card-badge">LIVE</div>
+            <div class="card-badge live">LIVE</div>
             <h2>// AUTOMATION_OPS</h2>
             <div class="data-row"><span>PIPELINE</span><span class="data-val" style="color:#4CAF50">DEPLOYED</span></div>
             <div class="data-row"><span>PLATFORMS</span><span class="data-val">5_LIVE</span></div>
@@ -403,10 +478,8 @@
 <!-- WANTED POSTER MODAL -->
 <div id="wanted-modal" onclick="if(event.target==this)closeWantedPoster()">
     <div class="wanted-poster">
-        <div class="poster-corner tl"></div>
-        <div class="poster-corner tr"></div>
-        <div class="poster-corner bl"></div>
-        <div class="poster-corner br"></div>
+        <div class="poster-corner tl"></div><div class="poster-corner tr"></div>
+        <div class="poster-corner bl"></div><div class="poster-corner br"></div>
         <div class="poster-header">
             <div class="poster-header-title">WANTED</div>
             <div class="poster-header-sub">DEAD OR HIRED // CLASSIFIED_DOSSIER</div>
@@ -454,11 +527,7 @@
 <div id="hired-confirm">
     <div class="hired-confirm-box">
         <div class="hired-confirm-title">⚠ CONFIRM HIRE?</div>
-        <div class="hired-confirm-sub">
-            WARNING: This action is irreversible.<br>
-            Subject will report to duty immediately.<br>
-            Are you absolutely sure?
-        </div>
+        <div class="hired-confirm-sub">WARNING: This action is irreversible.<br>Subject will report to duty immediately.<br>Are you absolutely sure?</div>
         <div class="hired-confirm-btns">
             <button class="hired-yes-btn" onclick="confirmHired()">YES, HIRE</button>
             <button class="hired-no-btn" onclick="document.getElementById('hired-confirm').style.display='none';openWantedPoster()">CANCEL</button>
@@ -469,19 +538,14 @@
 <!-- HIRED FINAL -->
 <div id="hired-final">
     <div class="hired-final-title">// CANDIDATE_DEPLOYED //</div>
-    <div class="hired-final-sub">
-        TRANSACTION COMPLETE.<br>
-        josiah@dossier has been successfully acquired.<br>
-        Reporting for duty: IMMEDIATELY.<br><br>
-        <span style="color:var(--gold)">josiahanota03@gmail.com</span>
-    </div>
+    <div class="hired-final-sub">TRANSACTION COMPLETE.<br>josiah@dossier has been successfully acquired.<br>Reporting for duty: IMMEDIATELY.<br><br><span style="color:var(--gold)">josiahanota03@gmail.com</span></div>
     <div class="no-backsies">[ NO TAKE BACKSIES. EVER. ]</div>
     <button class="hired-close-btn" onclick="document.getElementById('hired-final').style.display='none'">[ ACKNOWLEDGED ]</button>
 </div>
 
 <!-- KONAMI PROGRESS -->
 <div id="konami-progress">
-    <div class="kp-label" id="kp-next">NEXT: &uarr;</div>
+    <div class="kp-label" id="kp-next">NEXT: ↑</div>
     <div class="kp-dots" id="kp-dots"></div>
 </div>
 
@@ -495,10 +559,122 @@
 </div>
 
 <script>
+// ─── PROJECT DATA ───────────────────────────────────────────────────────────
+const projectData = {
+    STRIDE: {
+        title: '// PROJECT_FILE: STRIDE',
+        type: 'iframe',
+        url: 'https://yosiahh.github.io/hunters-log/',
+        body: `<strong>WHAT IT IS:</strong><br>STRIDE is a GPS-powered run tracker with a full RPG progression system. Every run earns XP, levels up your character, and rewards you with loot chest drops that fill an inventory.<br><br>
+<strong>STACK:</strong><br>
+→ Vanilla HTML / CSS / JavaScript (zero dependencies)<br>
+→ Browser Geolocation API for GPS tracking<br>
+→ Wake Lock API + silent audio keepalive (iOS background tracking fix)<br>
+→ LocalStorage for persistent save data<br>
+→ GitHub Pages for deployment<br><br>
+<strong>HOW IT WAS BUILT:</strong><br>
+Built entirely self-taught as a passion project. The RPG layer — XP curves, stat attributes (Stamina, Speed, Endurance), loot rarities, inventory equip system — was all custom-designed. The hardest part was iOS GPS persistence; solved it using Wake Lock API combined with a silent looping audio file to prevent the browser from sleeping mid-run.<br><br>
+<strong>FEATURES:</strong><br>
+→ Live Run HUD with map toggle<br>
+→ XP leveling system with stat increases on level-up<br>
+→ Loot chest rewards (Common / Rare / Epic)<br>
+→ Full inventory + equipment slots<br>
+→ Achievements system<br>
+→ CSV / GPX export<br>
+→ Tested live in real runs with real users`
+    },
+    AFFHUB: {
+        title: '// PROJECT_FILE: AFFHUB',
+        type: 'mockup',
+        mockupId: 'affhub-mockup',
+        body: `<strong>WHAT IT IS:</strong><br>AFFHUB is a single-file Shopify affiliate marketing automation tool. It generates AI-powered captions for products and auto-posts them to Facebook, Instagram, Threads, and TikTok — timed to Philippine peak engagement hours.<br><br>
+<strong>STACK:</strong><br>
+→ Single HTML file (vanilla JS)<br>
+→ Gemini API — AI caption generation<br>
+→ Make.com webhook — multi-platform posting<br>
+→ LocalStorage — manual product library<br>
+→ GitHub Pages — deployment<br><br>
+<strong>HOW IT WAS BUILT:</strong><br>
+Designed as a tool for PH-based affiliate marketers who sell Shopify products. The tone selector lets users switch between caption styles (professional, casual, hype). The PH peak-time scheduler queues posts to fire during optimal engagement windows. A Gemini API key status indicator gives live feedback on API health.<br><br>
+<strong>FEATURES:</strong><br>
+→ Manual product library with add/edit/delete<br>
+→ Tone selector (Professional / Casual / Hype)<br>
+→ PH peak-time scheduler<br>
+→ Post queue system<br>
+→ Live Gemini API key status indicator<br>
+→ One-click webhook dispatch to Make.com<br><br>
+<strong>STATUS:</strong> V2 complete. Full automation pending Shopee Open Platform API approval.`
+    },
+    COMPOSEDCONQUEST: {
+        title: '// PROJECT_FILE: COMPOSED_CONQUEST',
+        type: 'mockup',
+        mockupId: 'cc-mockup',
+        body: `<strong>WHAT IT IS:</strong><br>ComposedConquest is a fully autonomous AI content brand running 24/7 across 5 social platforms — with zero manual posting required. Built in 48 hours at ₱0 cost.<br><br>
+<strong>STACK:</strong><br>
+→ n8n (self-hosted via Docker on Windows / WSL2)<br>
+→ Gemini 2.5 Flash API — content generation<br>
+→ Make.com — cloud automation orchestration<br>
+→ Meta Graph API — Instagram + Facebook Business<br>
+→ Amazon Associates — affiliate monetization<br>
+→ Wise — USD payment routing<br>
+→ GitHub Pages — brand landing page<br><br>
+<strong>HOW IT WAS BUILT:</strong><br>
+The entire pipeline was engineered from scratch. The key technical breakthrough was linking the Instagram Business account to the Facebook Page under Linked Accounts — this resolved persistent Meta API OAuth failures that had blocked the project. The pipeline runs scheduled at 4AM daily, generates faith-driven stoic content, and distributes to all platforms without touching a device.<br><br>
+<strong>IMPACT:</strong><br>
+→ 5 platforms posting daily: Instagram, TikTok, Threads, Facebook, Reddit<br>
+→ Amazon Associates approved + Wise USD routing live<br>
+→ Build cost: ₱0 (all free tiers)<br>
+→ Build time: 48 hours`
+    },
+    CLIPPER: {
+        title: '// PROJECT_FILE: HIGHLIGHTS_CLIPPER',
+        type: 'mockup',
+        mockupId: 'clipper-mockup',
+        body: `<strong>WHAT IT IS:</strong><br>An AI-assisted highlight clipper for long-form streams and videos. It automatically detects exciting moments, trims the clip (with a 15-second pre-roll), adds subtitles and background music, then posts to multiple accounts.<br><br>
+<strong>STACK:</strong><br>
+→ Python — core engine<br>
+→ yt-dlp — video downloader (tested + working)<br>
+→ FFmpeg — video editor / trimmer (tested + working)<br>
+→ Whisper / transcription — transcript generation (tested + working)<br>
+→ Gemini API — highlight detection via transcript analysis<br>
+→ Make.com / n8n — multi-platform posting pipeline<br><br>
+<strong>CURRENT STATE:</strong><br>
+Phase 1 complete — downloader, editor, and transcriber all built and tested successfully with a live YouTube link. The AI highlight detection layer (Gemini analyzing transcript timestamps) is the next build target.<br><br>
+<strong>PIPELINE DESIGN:</strong><br>
+Input video → Download → Transcribe → AI detects peak moments → Roll back 15s → Trim clip → Add music + subtitles → Post to accounts<br><br>
+<strong>TARGET MARKET:</strong><br>
+Streamers and content creators who need automated clipping without paying $50+/month for tools like Opus Clip.`
+    },
+    PORTFOLIO: {
+        title: '// PROJECT_FILE: DOSSIER_v2.0',
+        type: 'iframe',
+        url: 'https://yosiahh.github.io/resume-portfolio/',
+        body: `<strong>WHAT IT IS:</strong><br>This interactive portfolio — a cyberpunk-themed dossier system with a terminal emulator, matrix rain, deploy animation, GitHub API integration, radar chart, and a hidden Konami code easter egg.<br><br>
+<strong>STACK:</strong><br>
+→ Vanilla HTML / CSS / JavaScript (zero frameworks)<br>
+→ Chart.js — radar skill chart<br>
+→ GitHub REST API — live repo stats<br>
+→ Make.com webhook — hire notification system<br>
+→ Web Audio API — click / beep sound effects<br>
+→ GitHub Pages — deployment<br><br>
+<strong>HOW IT WAS BUILT:</strong><br>
+Built to stand out from template portfolios. Every interaction has a purpose: the boot sequence sets the narrative, the terminal lets recruiters dig deeper without reading walls of text, the "HIRED" button triggers a Make.com webhook that fires a real notification. The Konami easter egg reveals a hidden message to anyone curious enough to find it.<br><br>
+<strong>FEATURES:</strong><br>
+→ Splash screen with menu<br>
+→ Animated boot sequence<br>
+→ Full terminal emulator with command history<br>
+→ Matrix rain background (main + splash)<br>
+→ Wanted poster modal with multi-step HIRED flow<br>
+→ GitHub API live stats<br>
+→ Konami code easter egg<br>
+→ Hire notification via Make.com webhook`
+    }
+};
+
+// ─── INTEL DATA (existing cards) ────────────────────────────────────────────
 const intelData = {
     CORE_PROFILE:{title:"// DATA_LOG: SUBJECT_DNA",body:"<strong>NAME:</strong> Josiah Asa Anota.<br><br><strong>AGE:</strong> 25 years old. Taguig City, Philippines.<br><br><strong>SPECIALIZATION:</strong> AI Automation, Workflow Engineering, Brand Architecture.<br><br><strong>VITAL_SIGNS:</strong> Known for extreme composure under technical fire. Navigated Meta API OAuth hell, Docker containerization errors, and webhook architecture from scratch — without formal training.<br><br><strong>2030_OBJECTIVE:</strong> National Security service. Everything built now is preparation."},
     TECH_ARSENAL:{title:"// DATA_LOG: WEAPONRY_SPECS",body:"<strong>AI & AUTOMATION:</strong> Gemini 2.5 Flash API, n8n self-hosted workflows, Make.com cloud scenarios, webhook architecture, REST API integration.<br><br><strong>INFRASTRUCTURE:</strong> Docker containerization on Windows, WSL2, self-hosted tools, GitHub Pages deployment.<br><br><strong>SOCIAL APIS:</strong> Meta Graph API, Instagram Business API, OAuth token management, Facebook Page API.<br><br><strong>WEB:</strong> HTML5, CSS3, JavaScript — two live deployed projects.<br><br><strong>CYBER OPS:</strong> Kali Linux, Nmap vulnerability scanning, VirtualBox isolated testing, IBM Cybersecurity certified."},
-    PROJECT_DEV:{title:"// DATA_LOG: IN-DEVELOPMENT_ASSETS",body:"<strong>COMPOSED_CONQUEST:</strong> Full AI-automated self-improvement brand. n8n + Gemini AI generates faith-driven content → Make.com → auto-posts to Instagram, TikTok, Threads, Facebook, Reddit daily. Amazon Associates monetized. GitHub Pages landing page with affiliate links. Built in 48 hours at ₱0 cost.<br><br><strong>HUNTER_LOG_POSE:</strong> Fitness gamification app with Bounty/XP mechanics and pixel art progression. Solo project.<br><br><strong>RESUME_DOSSIER:</strong> This interactive portfolio — terminal emulator, matrix rain, deploy animation, radar chart, GitHub API, Konami easter egg. Vanilla HTML/CSS/JS. Deployed on GitHub Pages."},
     AUTOMATION_OPS:{title:"// DATA_LOG: AUTOMATION_PIPELINE",body:"<strong>PIPELINE BUILT:</strong> Full end-to-end AI content automation from zero in under 48 hours.<br><br><strong>TECH STACK:</strong><br>→ n8n (self-hosted via Docker on Windows)<br>→ Gemini 2.5 Flash AI (content generation)<br>→ Make.com (cloud automation, 24/7)<br>→ Meta Graph API (Instagram posting)<br><br><strong>PLATFORMS LIVE:</strong> Instagram, Facebook, TikTok, Threads, Reddit.<br><br><strong>MONETIZATION:</strong> Amazon Associates approved. Wise USD payment pipeline. GitHub Pages site with affiliate links live.<br><br><strong>TOTAL COST:</strong> ₱0. Built entirely on free tiers.<br><br><strong>BUILD TIME:</strong> 48 hours."},
     FIELD_OPS:{title:"// DATA_LOG: OPERATIONAL_HISTORY",body:"<strong>FOUNDEVER (2025):</strong> Technical Support Representative for North American clients. Hardware and network diagnostics. High-pressure de-escalation scenarios.<br><br><strong>CONCENTRIX (2019–2023):</strong> Advisor for international representative support. Maintained 100% resolution approval rating across tenure.<br><br><strong>GIFT (NGO):</strong> Administrator managing outreach coordination and community volunteer programs."},
     MILESTONES:{title:"// DATA_LOG: VERIFIED_CREDENTIALS",body:"<strong>ACADEMIC:</strong> B.S. Computer Science — Major in Application Development, University of Makati (UMAK).<br><br><strong>IBM CERT:</strong> Cybersecurity Fundamentals — IBM verified.<br><br><strong>TESDA NC III:</strong> Incoming certification, April 2026.<br><br><strong>SELF-BUILT:</strong> Two live deployed projects, one monetized brand, one interactive portfolio — all self-taught using AI-assisted learning in under 30 days."},
@@ -508,7 +684,161 @@ const intelData = {
     PHYS_COND:{title:"// DATA_LOG: BIOMETRIC_GOALS",body:"<strong>OBJECTIVE:</strong> Meeting elite physical standards for national security forces by 2030.<br><br><strong>TRAINING:</strong> Endurance running and functional strength building.<br><br><strong>MINDSET:</strong> The same discipline applied to ComposedConquest is applied to physical conditioning. No shortcuts. Quiet execution."}
 };
 
-// MATRIX RAIN - SPLASH (absolute in splash div)
+// ─── PROJECT DETAIL OPENER ───────────────────────────────────────────────────
+function openProjectDetail(key) {
+    const p = projectData[key];
+    if (!p) return;
+
+    document.getElementById('detail-title').innerText = p.title;
+    document.getElementById('detail-body').innerHTML = p.body;
+
+    const visualEl = document.getElementById('detail-visual');
+    visualEl.innerHTML = '';
+    visualEl.style.padding = '0';
+    visualEl.style.background = 'transparent';
+    visualEl.style.border = 'none';
+
+    if (p.type === 'iframe') {
+        visualEl.className = 'proj-visual-pane';
+        visualEl.innerHTML = `
+            <div class="proj-visual-header">
+                <div class="proj-visual-dot" style="background:#FF4444"></div>
+                <div class="proj-visual-dot" style="background:#C9A84C"></div>
+                <div class="proj-visual-dot" style="background:#4CAF50"></div>
+                <span class="proj-visual-title">${p.url}</span>
+                <a href="${p.url}" target="_blank" style="font-size:.5rem;color:var(--gold);text-decoration:none;letter-spacing:1px">↗ OPEN</a>
+            </div>
+            <div class="proj-iframe-wrap">
+                <iframe src="${p.url}" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+            </div>`;
+    } else {
+        visualEl.className = 'proj-visual-pane';
+        visualEl.innerHTML = `
+            <div class="proj-visual-header">
+                <div class="proj-visual-dot" style="background:#FF4444"></div>
+                <div class="proj-visual-dot" style="background:#C9A84C"></div>
+                <div class="proj-visual-dot" style="background:#4CAF50"></div>
+                <span class="proj-visual-title">${p.title.replace('// PROJECT_FILE: ','')}_SCHEMATIC</span>
+            </div>
+            <div class="proj-mockup" id="${p.mockupId}"></div>`;
+        setTimeout(() => buildMockup(p.mockupId, key), 50);
+    }
+
+    document.getElementById('detail-overlay').style.display = 'flex';
+    playClick();
+}
+
+// ─── MOCKUP BUILDER ──────────────────────────────────────────────────────────
+function buildMockup(containerId, key) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+
+    if (key === 'AFFHUB') {
+        el.innerHTML = `
+        <div style="font-size:.55rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:12px">// UI_SCHEMATIC: AFFHUB_v2</div>
+        <div style="border:1px solid rgba(201,168,76,.2);padding:12px;background:rgba(201,168,76,.03);margin-bottom:10px">
+            <div style="font-size:.5rem;color:var(--gold);letter-spacing:2px;margin-bottom:8px">PRODUCT LIBRARY</div>
+            ${['Shopify Product A — ₱899','Shopify Product B — ₱1,299','Shopify Product C — ₱599'].map(p=>`
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border:1px solid rgba(201,168,76,.1);margin-bottom:4px;font-size:.5rem">
+                <span style="color:var(--text-dim)">${p}</span>
+                <span style="color:var(--gold);cursor:pointer">[ GENERATE ]</span>
+            </div>`).join('')}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+            <div style="border:1px solid rgba(201,168,76,.2);padding:10px;background:rgba(201,168,76,.03)">
+                <div style="font-size:.45rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:6px">TONE_SELECTOR</div>
+                ${['Professional','Casual','Hype'].map((t,i)=>`<div style="padding:4px 8px;font-size:.5rem;border:1px solid ${i===2?'var(--gold)':'rgba(201,168,76,.15)'};color:${i===2?'var(--gold)':'var(--text-dim)'};margin-bottom:3px">${t}${i===2?' ◀':''}</div>`).join('')}
+            </div>
+            <div style="border:1px solid rgba(201,168,76,.2);padding:10px;background:rgba(201,168,76,.03)">
+                <div style="font-size:.45rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:6px">PH_PEAK_TIMES</div>
+                ${['12:00 NN ★','06:00 PM ★','09:00 PM','07:00 AM'].map(t=>`<div style="font-size:.5rem;color:${t.includes('★')?'var(--gold)':'var(--text-dim)'};padding:2px 0">${t}</div>`).join('')}
+            </div>
+        </div>
+        <div style="border:1px solid rgba(201,168,76,.3);padding:10px;background:rgba(201,168,76,.05);margin-bottom:10px">
+            <div style="font-size:.45rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:6px">GENERATED_CAPTION</div>
+            <div style="font-size:.5rem;color:var(--text);line-height:1.6">🔥 Level up your grind with this! Get yours now and feel the difference. Limited stocks only — link in bio! #ShopNow #PinoyFinds</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+            ${['FB','IG','THREADS','TIKTOK'].map(p=>`<div style="border:1px solid rgba(201,168,76,.3);padding:4px 10px;font-size:.45rem;color:var(--gold);letter-spacing:1px">${p} ✓</div>`).join('')}
+        </div>
+        <div style="background:var(--gold);color:#000;padding:8px;text-align:center;font-family:'Unbounded';font-size:.55rem;letter-spacing:2px;cursor:pointer">[ POST_TO_ALL ]</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
+            <div style="width:6px;height:6px;border-radius:50%;background:#4CAF50;animation:pulse 1s infinite"></div>
+            <span style="font-size:.45rem;color:#4CAF50;letter-spacing:1px">GEMINI API: CONNECTED</span>
+        </div>`;
+    }
+
+    if (key === 'COMPOSEDCONQUEST') {
+        el.innerHTML = `
+        <div style="font-size:.55rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:16px">// PIPELINE_SCHEMATIC: COMPOSED_CONQUEST</div>
+        <div class="stack-flow">
+            <div class="stack-node"><span class="stack-node-icon">⏰</span><div><div style="color:var(--gold);font-size:.6rem">SCHEDULE_TRIGGER</div><div style="font-size:.45rem;color:var(--text-dim)">n8n · Daily 4:00 AM · Self-hosted Docker</div></div></div>
+            <div class="stack-arrow">↓ ↓ ↓</div>
+            <div class="stack-node"><span class="stack-node-icon">🤖</span><div><div style="color:var(--gold);font-size:.6rem">GEMINI_2.5_FLASH</div><div style="font-size:.45rem;color:var(--text-dim)">AI content generation · Faith-driven stoic captions · Custom system prompt</div></div></div>
+            <div class="stack-arrow">↓ ↓ ↓</div>
+            <div class="stack-node"><span class="stack-node-icon">🔗</span><div><div style="color:var(--gold);font-size:.6rem">MAKE.COM_WEBHOOK</div><div style="font-size:.45rem;color:var(--text-dim)">Cloud orchestration · 24/7 runtime · Zero local machine required</div></div></div>
+            <div class="stack-arrow">↓ ↓ ↓</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                ${[['📸','INSTAGRAM','Meta Graph API'],['📘','FACEBOOK','Page API'],['🧵','THREADS','Meta API'],['🎵','TIKTOK','Content API'],['🔴','REDDIT','Pushshift']].map(([ic,name,api])=>`
+                <div class="stack-node dim" style="padding:6px 10px"><span>${ic}</span><div><div style="font-size:.55rem;color:var(--gold)">${name}</div><div style="font-size:.4rem;color:var(--text-dim)">${api}</div></div></div>`).join('')}
+            </div>
+            <div class="stack-arrow">↓ ↓ ↓</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <div class="stat-chip">RUNTIME <span>24/7</span></div>
+                <div class="stat-chip">BUILD COST <span>₱0</span></div>
+                <div class="stat-chip">BUILD TIME <span>48 HRS</span></div>
+                <div class="stat-chip">PLATFORMS <span>5 LIVE</span></div>
+            </div>
+        </div>`;
+    }
+
+    if (key === 'CLIPPER') {
+        el.innerHTML = `
+        <div style="font-size:.55rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:8px">// PIPELINE_SCHEMATIC: HIGHLIGHTS_CLIPPER</div>
+        <div style="font-size:.45rem;color:var(--bounty-red);letter-spacing:2px;margin-bottom:16px;animation:wip-blink 1.5s infinite">⚠ STATUS: IN_DEVELOPMENT — PHASE 1 COMPLETE</div>
+        <div class="stack-flow">
+            <div class="stack-node"><span class="stack-node-icon">🎥</span><div><div style="color:var(--gold);font-size:.6rem">INPUT: STREAM_URL</div><div style="font-size:.45rem;color:var(--text-dim)">YouTube / Twitch VOD link</div></div><span style="margin-left:auto;font-size:.45rem;color:#4CAF50">✓ DONE</span></div>
+            <div class="stack-arrow">↓</div>
+            <div class="stack-node"><span class="stack-node-icon">⬇️</span><div><div style="color:var(--gold);font-size:.6rem">yt-dlp DOWNLOADER</div><div style="font-size:.45rem;color:var(--text-dim)">Python · Tested on live YT link</div></div><span style="margin-left:auto;font-size:.45rem;color:#4CAF50">✓ DONE</span></div>
+            <div class="stack-arrow">↓</div>
+            <div class="stack-node"><span class="stack-node-icon">📝</span><div><div style="color:var(--gold);font-size:.6rem">WHISPER TRANSCRIBER</div><div style="font-size:.45rem;color:var(--text-dim)">Python · Full transcript with timestamps</div></div><span style="margin-left:auto;font-size:.45rem;color:#4CAF50">✓ DONE</span></div>
+            <div class="stack-arrow">↓</div>
+            <div class="stack-node"><span class="stack-node-icon">🤖</span><div><div style="color:var(--gold);font-size:.6rem">GEMINI AI DETECTOR</div><div style="font-size:.45rem;color:var(--text-dim)">Analyze transcript → return peak timestamps</div></div><span style="margin-left:auto;font-size:.45rem;color:var(--bounty-red)">⚡ NEXT</span></div>
+            <div class="stack-arrow">↓</div>
+            <div class="stack-node dim"><span class="stack-node-icon">✂️</span><div><div style="font-size:.6rem">FFMPEG EDITOR</div><div style="font-size:.45rem;color:var(--text-dim)">Roll back 15s · Trim · Add music + subtitles</div></div><span style="margin-left:auto;font-size:.45rem;color:var(--text-dim)">PENDING</span></div>
+            <div class="stack-arrow">↓</div>
+            <div class="stack-node dim"><span class="stack-node-icon">📤</span><div><div style="font-size:.6rem">MULTI-PLATFORM POST</div><div style="font-size:.45rem;color:var(--text-dim)">Make.com / n8n → TikTok, IG Reels, YT Shorts</div></div><span style="margin-left:auto;font-size:.45rem;color:var(--text-dim)">PENDING</span></div>
+        </div>`;
+    }
+}
+
+// ─── STANDARD DETAIL OPENER ──────────────────────────────────────────────────
+function openDetail(key, el) {
+    if (!intelData[key]) return;
+    document.getElementById('main-content').classList.add('glitch-flash');
+    document.getElementById('detail-title').innerText = intelData[key].title;
+    document.getElementById('detail-body').innerHTML = intelData[key].body;
+
+    const visualEl = document.getElementById('detail-visual');
+    visualEl.className = '';
+    visualEl.style.cssText = 'background:var(--surface);padding:20px;border:1px solid var(--gold-glow);overflow-y:auto;max-height:80vh';
+    visualEl.innerHTML = el.innerHTML;
+
+    document.getElementById('detail-overlay').style.display = 'flex';
+    playClick();
+    setTimeout(() => document.getElementById('main-content').classList.remove('glitch-flash'), 250);
+}
+
+function closeDetail() {
+    document.getElementById('detail-overlay').style.display = 'none';
+    // Clean up iframe to stop loading
+    const visualEl = document.getElementById('detail-visual');
+    const iframe = visualEl.querySelector('iframe');
+    if (iframe) iframe.src = '';
+    playClick();
+}
+
+// ─── MATRIX RAIN — SPLASH ────────────────────────────────────────────────────
 (function(){
     const c=document.getElementById('matrix-canvas'),ctx=c.getContext('2d');
     function resize(){c.width=window.innerWidth;c.height=window.innerHeight}resize();window.addEventListener('resize',resize);
@@ -518,7 +848,7 @@ const intelData = {
     setInterval(()=>{ctx.fillStyle='rgba(8,12,16,0.05)';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#C9A84C';ctx.font=fs+'px JetBrains Mono';drops.forEach((y,i)=>{ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fs,y*fs);if(y*fs>c.height&&Math.random()>.975)drops[i]=0;drops[i]++})},60);
 })();
 
-// MATRIX RAIN - MAIN PAGE (fixed, full viewport, always visible behind content)
+// ─── MATRIX RAIN — MAIN ──────────────────────────────────────────────────────
 (function(){
     const c=document.getElementById('main-matrix-canvas'),ctx=c.getContext('2d');
     function resize(){c.width=window.innerWidth;c.height=window.innerHeight}resize();window.addEventListener('resize',resize);
@@ -540,7 +870,7 @@ const intelData = {
     },50);
 })();
 
-// BOOT SEQUENCE
+// ─── BOOT ────────────────────────────────────────────────────────────────────
 function startBoot(){
     const splash=document.getElementById('splash-screen'),boot=document.getElementById('boot-screen');
     splash.classList.add('fade-out');
@@ -557,7 +887,8 @@ function startBoot(){
         {text:'[OK] Amazon Associates: monetized',cls:'dim',d:2500},
         {text:'WARNING: Subject has 0 formal training. Proceeding anyway.',cls:'err',d:2900},
         {text:'[OK] ComposedConquest brand: LIVE across 5 platforms',cls:'',d:3300},
-        {text:'All systems nominal. Loading dossier...',cls:'',d:3700},
+        {text:'[OK] PROJECT_FILES: 5 entries loaded',cls:'',d:3600},
+        {text:'All systems nominal. Loading dossier...',cls:'',d:3900},
         {text:'ACCESS GRANTED. Welcome to JOSIAH_SYSTEM_v2.0.0',cls:'',d:4200},
     ];
     lines.forEach(({text,cls,d=0})=>{
@@ -581,21 +912,17 @@ function typeWriter(text){
     let i=0;const t=document.getElementById('typewriter');
     function type(){if(i<text.length){t.innerHTML+=text.charAt(i);i++;setTimeout(type,80)}}type();
 }
-
 function startUptime(){
     let s=0;setInterval(()=>{s++;let h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
     document.getElementById('uptime').innerText=`UPTIME: ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;},1000);
 }
-
 function startPingFlicker(){
     setInterval(()=>{const el=document.getElementById('ping-val');if(el)el.innerText=Math.floor(8+Math.random()*20)},2000);
 }
-
 function initChart(){
     const ctx=document.getElementById('skillsChart').getContext('2d');
     new Chart(ctx,{type:'radar',data:{labels:['AI_PROMPT','BRAND','WORKFLOW','META_API','DOCKER','HTML_CSS'],datasets:[{data:[90,92,78,85,72,65],backgroundColor:'rgba(201,168,76,0.15)',borderColor:'#C9A84C',borderWidth:2,pointBackgroundColor:'#C9A84C',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:'rgba(201,168,76,0.1)'},angleLines:{color:'rgba(201,168,76,0.1)'},ticks:{display:false},pointLabels:{color:'#888070',font:{family:'JetBrains Mono',size:9}},suggestedMin:0,suggestedMax:100}},plugins:{legend:{display:false}},animation:{duration:1500}}});
 }
-
 async function fetchGitHub(){
     try{
         const r=await fetch('https://api.github.com/users/yosiahh'),d=await r.json();
@@ -609,79 +936,15 @@ async function fetchGitHub(){
     }catch(e){document.getElementById('gh-stats-card').innerHTML='<p style="font-size:.6rem;color:var(--text-dim)">FETCH_ERROR: API_RATE_LIMIT<br>Visit github.com/yosiahh</p>';}
 }
 
-function openDetail(key,el){
-    if(!intelData[key])return;
-    document.getElementById('main-content').classList.add('glitch-flash');
-    document.getElementById('detail-title').innerText=intelData[key].title;
-    document.getElementById('detail-body').innerHTML=intelData[key].body;
-    document.getElementById('detail-visual').innerHTML=el.innerHTML;
-    document.getElementById('detail-overlay').style.display='flex';
-    playClick();setTimeout(()=>document.getElementById('main-content').classList.remove('glitch-flash'),250);
-}
-function closeDetail(){document.getElementById('detail-overlay').style.display='none';playClick();}
-
+// ─── HIRE ME PARTICLES ───────────────────────────────────────────────────────
 function spawnHireMe(e){
     const msgs=['HIRE ME PLEASE','HIRE ME PLEASE','HIRE ME PLEASE','DEPLOY_CANDIDATE','AVAILABLE NOW','SKILL_VERIFIED','₱₱₱ HIRE ₱₱₱','I NEED A JOB','AUTOMATION_MASTER','PLEASE 🙏','SEND_OFFER.EXE','HIRE_ME.JS'];
-    const p=document.createElement('div');
-    p.className='hire-particle';
-    p.innerText=msgs[Math.floor(Math.random()*msgs.length)];
-    p.style.left=e.clientX+'px';
-    p.style.top=e.clientY+'px';
-    p.style.position='fixed';
-    document.body.appendChild(p);
-
-    // Random flight properties
-    const angle=Math.random()*Math.PI*2;
-    const vel=100+Math.random()*220;
-    const dx=Math.cos(angle)*vel;
-    const dy=Math.sin(angle)*vel;
+    const p=document.createElement('div');p.className='hire-particle';p.innerText=msgs[Math.floor(Math.random()*msgs.length)];
+    p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';p.style.position='fixed';document.body.appendChild(p);
+    const angle=Math.random()*Math.PI*2,vel=100+Math.random()*220,dx=Math.cos(angle)*vel,dy=Math.sin(angle)*vel;
     const spin=Math.random()>.5?(Math.random()*720+180):(-(Math.random()*720+180));
-    const scaleEnd=0.3+Math.random()*0.8;
-    const duration=1200+Math.random()*1200;
-    const fontSize=(0.6+Math.random()*0.6)+'rem';
-    p.style.fontSize=fontSize;
-
-    // Pick a random animation style
-    const style=Math.floor(Math.random()*5);
-    let keyframes;
-    if(style===0){
-        // Straight fly + spin
-        keyframes=[
-            {transform:'translate(-50%,-50%) rotate(0deg) scale(1)',opacity:1},
-            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${spin}deg) scale(${scaleEnd})`,opacity:0}
-        ];
-    } else if(style===1){
-        // Wobbly arc
-        const cx=dx*0.5+Math.cos(angle+Math.PI/2)*80;
-        const cy=dy*0.5+Math.sin(angle+Math.PI/2)*80;
-        keyframes=[
-            {transform:'translate(-50%,-50%) scale(1.2) rotate(0deg)',opacity:1,offset:0},
-            {transform:`translate(calc(-50% + ${cx}px),calc(-50% + ${cy}px)) scale(1) rotate(${spin*0.5}deg)`,opacity:.7,offset:0.5},
-            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(.2) rotate(${spin}deg)`,opacity:0,offset:1}
-        ];
-    } else if(style===2){
-        // Flip/roll (Y axis)
-        keyframes=[
-            {transform:'translate(-50%,-50%) perspective(400px) rotateY(0deg) scale(1)',opacity:1},
-            {transform:`translate(calc(-50% + ${dx*0.3}px),calc(-50% + ${dy*0.3}px)) perspective(400px) rotateY(360deg) scale(1.2)`,opacity:.8,offset:.3},
-            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) perspective(400px) rotateY(${spin}deg) scale(.1)`,opacity:0,offset:1}
-        ];
-    } else if(style===3){
-        // Bounce up then fly
-        keyframes=[
-            {transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:0},
-            {transform:`translate(-50%,calc(-50% - 60px)) scale(1.3)`,opacity:1,offset:.15},
-            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(.1) rotate(${spin}deg)`,opacity:0,offset:1}
-        ];
-    } else {
-        // Tumble + shrink
-        keyframes=[
-            {transform:'translate(-50%,-50%) rotate(0deg) skewX(0deg) scale(1)',opacity:1},
-            {transform:`translate(calc(-50% + ${dx*0.4}px),calc(-50% + ${dy*0.4}px)) rotate(${spin*0.4}deg) skewX(20deg) scale(.8)`,opacity:.6,offset:.4},
-            {transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${spin}deg) skewX(-10deg) scale(0)`,opacity:0,offset:1}
-        ];
-    }
-    p.animate(keyframes,{duration,easing:'cubic-bezier(.2,0,.8,1)',fill:'forwards'});
+    const duration=1200+Math.random()*1200;p.style.fontSize=(0.6+Math.random()*0.6)+'rem';
+    p.animate([{transform:'translate(-50%,-50%) rotate(0deg) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${spin}deg) scale(.2)`,opacity:0}],{duration,easing:'cubic-bezier(.2,0,.8,1)',fill:'forwards'});
     setTimeout(()=>p.remove(),duration+100);
 }
 
@@ -696,28 +959,28 @@ function triggerDeploy(e){
     },400);
 }
 
-// TERMINAL
+// ─── TERMINAL ────────────────────────────────────────────────────────────────
 const termHistory=[];let histIdx=-1;
 const termCommands={
     help:()=>`<span class="t-gold">AVAILABLE COMMANDS:</span>
-<span class="t-white">  whoami       </span>— subject identification
-<span class="t-white">  ls           </span>— list all modules
-<span class="t-white">  cat skills   </span>— display tech arsenal
-<span class="t-white">  cat projects </span>— display project log
-<span class="t-white">  cat career   </span>— display career intel
-<span class="t-white">  cat pipeline </span>— display automation ops
-<span class="t-white">  github       </span>— open github profile
-<span class="t-white">  email        </span>— copy email to clipboard
-<span class="t-white">  hire         </span>— initiate hire sequence
-<span class="t-white">  clear        </span>— clear terminal
-<span class="t-white">  exit         </span>— close terminal
+<span class="t-white">  whoami        </span>— subject identification
+<span class="t-white">  ls            </span>— list all modules
+<span class="t-white">  cat skills    </span>— display tech arsenal
+<span class="t-white">  cat projects  </span>— list all projects
+<span class="t-white">  cat career    </span>— display career intel
+<span class="t-white">  cat pipeline  </span>— display automation ops
+<span class="t-white">  github        </span>— open github profile
+<span class="t-white">  email         </span>— copy email to clipboard
+<span class="t-white">  hire          </span>— initiate hire sequence
+<span class="t-white">  clear         </span>— clear terminal
+<span class="t-white">  exit          </span>— close terminal
 <span class="t-gold">EASTER_EGG:</span> konami code on main screen ↑↑↓↓←→←→BA`,
     whoami:()=>`<span class="t-gold">JOSIAH_ASA_ANOTA</span>\nAge: 25 | Location: Pitogo, Taguig\nSpecialization: AI_AUTOMATION\nStatus: <span class="t-success">AVAILABLE_FOR_HIRE</span>\nTarget: Remote automation role | 2030: National Security\n"Conquer everything. Quietly."`,
-    ls:()=>`<span class="t-gold">DOSSIER_MODULES:</span>\ndrwxr-xr-x  CORE_PROFILE/\ndrwxr-xr-x  TECH_ARSENAL/\ndrwxr-xr-x  PROJECT_DEV/\ndrwxr-xr-x  AUTOMATION_OPS/\ndrwxr-xr-x  FIELD_OPS/\ndrwxr-xr-x  MILESTONES/\ndrwxr-xr-x  CAREER_INTEL/\ndrwxr-xr-x  GITHUB_STATS/\ndrwxr-xr-x  STATUS_RADAR/\n-rw-------  classified.txt  <span class="t-err">[KONAMI_REQUIRED]</span>`,
+    ls:()=>`<span class="t-gold">DOSSIER_MODULES:</span>\ndrwxr-xr-x  CORE_PROFILE/\ndrwxr-xr-x  TECH_ARSENAL/\ndrwxr-xr-x  PROJECT_FILES/ (5 entries)\ndrwxr-xr-x  AUTOMATION_OPS/\ndrwxr-xr-x  FIELD_OPS/\ndrwxr-xr-x  MILESTONES/\ndrwxr-xr-x  CAREER_INTEL/\ndrwxr-xr-x  GITHUB_STATS/\ndrwxr-xr-x  STATUS_RADAR/\n-rw-------  classified.txt  <span class="t-err">[KONAMI_REQUIRED]</span>`,
     'cat skills':()=>`<span class="t-gold">TECH_ARSENAL.txt</span>\nAI_PROMPT_ENG ████████████████████ 90%\nBRAND_STRATEGY ████████████████████ 92%\nN8N_AUTOMATION ████████████████░░░░ 78%\nMAKE_COM       ███████████████░░░░░ 77%\nMETA_API       █████████████████░░░ 85%\nDOCKER         ██████████████░░░░░░ 72%\nHTML_CSS_JS    █████████████░░░░░░░ 65%`,
-    'cat projects':()=>`<span class="t-gold">PROJECT_LOG.txt</span>\n[1] COMPOSED_CONQUEST\n    Stack: n8n + Gemini + Make.com + Meta API\n    Status: <span class="t-success">LIVE</span> | Platforms: 5 | Cost: ₱0 | Time: 48hrs\n\n[2] HUNTER_LOG_POSE\n    Stack: HTML/CSS/JS | Status: IN_DEV\n    Fitness gamification with Bounty/XP mechanics\n\n[3] RESUME_DOSSIER\n    Stack: Vanilla JS | Status: <span class="t-success">DEPLOYED</span>\n    You are here.`,
-    'cat career':()=>`<span class="t-gold">CAREER_INTEL.txt</span>\nAUTOMATION_SPEC   ₱40-80K/mo  <span class="t-success">★ PRIMARY</span>\nAI_PROMPT_ENG     $30-80/hr   <span class="t-success">★ HIGH_VALUE</span>\nNO_CODE_DEV       ₱35-70K/mo\nFREELANCE_CONSULT $25-60/hr\n\n30_DAY_PLAN:\n→ Finish CC automation\n→ Document GitHub\n→ Create Upwork profile\n→ Apply 5 roles/day\n→ First affiliate income`,
-    'cat pipeline':()=>`<span class="t-gold">AUTOMATION_OPS.txt</span>\nSTACK:\n  n8n (self-hosted via Docker)\n  └─ Schedule Trigger (04:00 daily)\n  └─ Gemini 2.5 Flash (content gen)\n  └─ HTTP Request → Make.com webhook\n     └─ Instagram Business API\n        └─ Post published ✓\n\nPLATFORMS: Instagram, Facebook, TikTok, Threads, Reddit\nRUNTIME: 24/7 cloud | COST: ₱0 | BUILD: 48hrs`,
+    'cat projects':()=>`<span class="t-gold">PROJECT_FILES/ (5 entries)</span>\n\n[1] STRIDE              <span class="t-success">LIVE</span>    GPS run tracker + RPG gamification\n[2] AFFHUB              <span class="t-gold">COMPLETE</span> Shopify affiliate automation tool\n[3] COMPOSED_CONQUEST   <span class="t-success">LIVE</span>    24/7 AI content brand (5 platforms)\n[4] HIGHLIGHTS_CLIPPER  <span class="t-err">IN_DEV</span>  AI stream clipper (Phase 1 done)\n[5] DOSSIER_v2.0        <span class="t-success">LIVE</span>    This portfolio (you are here)`,
+    'cat career':()=>`<span class="t-gold">CAREER_INTEL.txt</span>\nAUTOMATION_SPEC   ₱40-80K/mo  <span class="t-success">★ PRIMARY</span>\nAI_PROMPT_ENG     $30-80/hr   <span class="t-success">★ HIGH_VALUE</span>\nNO_CODE_DEV       ₱35-70K/mo\nFREELANCE_CONSULT $25-60/hr`,
+    'cat pipeline':()=>`<span class="t-gold">AUTOMATION_OPS.txt</span>\nn8n → Gemini 2.5 Flash → Make.com → Meta API\nPLATFORMS: Instagram, Facebook, TikTok, Threads, Reddit\nRUNTIME: 24/7 cloud | COST: ₱0 | BUILD: 48hrs`,
     github:()=>{window.open('https://github.com/yosiahh','_blank');return'<span class="t-success">Opening github.com/yosiahh...</span>'},
     email:()=>{copyEmail();return'<span class="t-success">Email copied: josiahanota03@gmail.com</span>'},
     hire:()=>{setTimeout(()=>triggerDeploy({clientX:window.innerWidth/2,clientY:window.innerHeight/2}),500);closeTerminal();return'<span class="t-gold">INITIATING HIRE SEQUENCE...</span>'},
@@ -731,19 +994,15 @@ function openTerminal(){
     if(!out.innerHTML){printTerminal('<span class="t-gold">JOSIAH_OS TERMINAL v2.0 // TYPE "help" FOR COMMANDS</span>');printTerminal('<span class="t-gold">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>');}
     setTimeout(()=>document.getElementById('terminal-input').focus(),100);playClick();
 }
-
 function openTerminalFromSplash(){
     document.getElementById('splash-screen').classList.add('fade-out');
     setTimeout(()=>{document.getElementById('splash-screen').style.display='none';enterArchive();setTimeout(openTerminal,300)},600);
 }
-
 function closeTerminal(){document.getElementById('terminal-overlay').style.display='none';playClick();}
-
 function printTerminal(html){
     const out=document.getElementById('terminal-output');
     const line=document.createElement('div');line.innerHTML=html;out.appendChild(line);out.scrollTop=out.scrollHeight;
 }
-
 document.getElementById('terminal-input').addEventListener('keydown',function(e){
     if(e.key==='Enter'){
         const cmd=this.value.trim().toLowerCase();if(!cmd)return;
@@ -757,6 +1016,7 @@ document.getElementById('terminal-input').addEventListener('keydown',function(e)
     if(e.key==='ArrowDown'){histIdx=Math.max(histIdx-1,-1);this.value=histIdx>=0?termHistory[histIdx]:'';}
 });
 
+// ─── UTILS ───────────────────────────────────────────────────────────────────
 function copyEmail(){
     navigator.clipboard.writeText('josiahanota03@gmail.com').then(()=>{
         ['copy-email-btn','hud-copy'].forEach(id=>{
@@ -766,7 +1026,6 @@ function copyEmail(){
         });playBeep();
     }).catch(()=>{alert('Email: josiahanota03@gmail.com')});
 }
-
 function showTooltip(e,title,desc){
     const tip=document.getElementById('skill-tooltip');
     tip.innerHTML=`<strong style="color:var(--gold)">${title}</strong><br>${desc}`;
@@ -778,134 +1037,63 @@ document.addEventListener('mousemove',e=>{
     if(tip.style.opacity==='1'){tip.style.left=(e.clientX+15)+'px';tip.style.top=(e.clientY-10)+'px';}
 });
 
-// SOUND
+// ─── SOUND ───────────────────────────────────────────────────────────────────
 let audioCtx;
 function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
 function playClick(){try{const c=getAudio(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='square';o.frequency.value=800;g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.08);o.start();o.stop(c.currentTime+.08);}catch(e){}}
 function playBeep(){try{const c=getAudio();[440,550,660].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const t=c.currentTime+i*.1;g.gain.setValueAtTime(.08,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.start(t);o.stop(t+.15);});}catch(e){}}
 
-// KONAMI - bulletproof version
+// ─── KONAMI ──────────────────────────────────────────────────────────────────
 const konamiSeq=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-const konamiLabels=['\u2191','\u2191','\u2193','\u2193','\u2190','\u2192','\u2190','\u2192','B','A'];
-let konamiIdx=0;
-let konamiTimeout=null;
-
+const konamiLabels=['↑','↑','↓','↓','←','→','←','→','B','A'];
+let konamiIdx=0,konamiTimeout=null;
 function buildKpDots(){
-    const wrap=document.getElementById('kp-dots');
-    if(!wrap)return;
+    const wrap=document.getElementById('kp-dots');if(!wrap)return;
     wrap.innerHTML='';
-    konamiSeq.forEach((_,i)=>{
-        const d=document.createElement('div');
-        d.className='kp-dot';
-        d.title=konamiLabels[i];
-        if(i<konamiIdx)d.classList.add('done');
-        else if(i===konamiIdx)d.classList.add('active');
-        wrap.appendChild(d);
-    });
-    // Also show current expected key
-    const lbl=document.getElementById('kp-next');
-    if(lbl)lbl.textContent='NEXT: '+konamiLabels[konamiIdx];
+    konamiSeq.forEach((_,i)=>{const d=document.createElement('div');d.className='kp-dot';if(i<konamiIdx)d.classList.add('done');else if(i===konamiIdx)d.classList.add('active');wrap.appendChild(d);});
+    const lbl=document.getElementById('kp-next');if(lbl)lbl.textContent='NEXT: '+konamiLabels[konamiIdx];
 }
-
 function updateKonami(newIdx){
-    konamiIdx=newIdx;
-    const prog=document.getElementById('konami-progress');
-    if(!prog)return;
-    if(konamiIdx>0){
-        prog.style.display='flex';
-        buildKpDots();
-        clearTimeout(konamiTimeout);
-        konamiTimeout=setTimeout(()=>{konamiIdx=0;prog.style.display='none';},4000);
-    } else {
-        prog.style.display='none';
-    }
+    konamiIdx=newIdx;const prog=document.getElementById('konami-progress');if(!prog)return;
+    if(konamiIdx>0){prog.style.display='flex';buildKpDots();clearTimeout(konamiTimeout);konamiTimeout=setTimeout(()=>{konamiIdx=0;prog.style.display='none';},4000);}
+    else{prog.style.display='none';}
 }
-
 document.addEventListener('keydown',e=>{
-    // Skip if typing in an input/textarea
     const active=document.activeElement;
     if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA'))return;
-    // Skip pure modifier keys
     if(['Shift','Control','Alt','Meta','CapsLock','Tab','Enter'].includes(e.key))return;
-
     const key=e.key.length===1?e.key.toLowerCase():e.key;
-    const expected=konamiSeq[konamiIdx];
-    const expectedNorm=expected.length===1?expected.toLowerCase():expected;
-
+    const expected=konamiSeq[konamiIdx],expectedNorm=expected.length===1?expected.toLowerCase():expected;
     if(key===expectedNorm){
         const next=konamiIdx+1;
-        if(next===konamiSeq.length){
-            // SUCCESS
-            konamiIdx=0;
-            clearTimeout(konamiTimeout);
-            const prog=document.getElementById('konami-progress');
-            if(prog)prog.style.display='none';
-            playBeep();
-            document.getElementById('konami-overlay').style.display='flex';
-        } else {
-            updateKonami(next);
-        }
+        if(next===konamiSeq.length){konamiIdx=0;clearTimeout(konamiTimeout);document.getElementById('konami-progress').style.display='none';playBeep();document.getElementById('konami-overlay').style.display='flex';}
+        else{updateKonami(next);}
     } else {
-        // Wrong key — check if it's the first key to give partial credit
         const firstNorm=konamiSeq[0].length===1?konamiSeq[0].toLowerCase():konamiSeq[0];
         updateKonami(key===firstNorm?1:0);
     }
-},true); // useCapture=true so we get it before any other handler
+},true);
 
-// HIRE ME PLEASE - fire on empty space clicks only
+// ─── CLICK PARTICLES ─────────────────────────────────────────────────────────
 document.addEventListener('click',e=>{
     try{getAudio().resume();}catch(err){}
     const tag=e.target.tagName.toLowerCase();
-    const interactive=['button','a','input','canvas','select','textarea'];
-    const isInteractive=interactive.includes(tag)||e.target.closest('button,a,input,[onclick],.card,.arsenal-item,.hud-btn,.action-btn,.menu-btn,.wanted-poster,#terminal-overlay,#detail-overlay,#deploy-overlay,#konami-overlay,#wanted-modal,#hired-confirm,#hired-final,#boot-screen');
-    if(!isInteractive&&document.getElementById('main-content').style.display!=='none'){
-        spawnHireMe(e);
-    }
+    const isInteractive=e.target.closest('button,a,input,[onclick],.card,.arsenal-item,.hud-btn,.action-btn,.menu-btn,.project-row,.wanted-poster,#terminal-overlay,#detail-overlay,#deploy-overlay,#konami-overlay,#wanted-modal,#hired-confirm,#hired-final,#boot-screen');
+    if(!isInteractive&&document.getElementById('main-content').style.display!=='none'){spawnHireMe(e);}
 });
 
-// WANTED POSTER
-function openWantedPoster(){
-    document.getElementById('wanted-modal').style.display='flex';
-    playBeep();
-}
-function closeWantedPoster(){
-    document.getElementById('wanted-modal').style.display='none';
-    playClick();
-}
-function showHiredConfirm(){
-    document.getElementById('hired-confirm').style.display='flex';
-    playBeep();
-}
+// ─── WANTED POSTER ───────────────────────────────────────────────────────────
+function openWantedPoster(){document.getElementById('wanted-modal').style.display='flex';playBeep();}
+function closeWantedPoster(){document.getElementById('wanted-modal').style.display='none';playClick();}
+function showHiredConfirm(){document.getElementById('hired-confirm').style.display='flex';playBeep();}
 function confirmHired(){
     document.getElementById('hired-confirm').style.display='none';
-    for(let i=0;i<12;i++){
-        setTimeout(()=>{
-            spawnHireMe({clientX:Math.random()*window.innerWidth,clientY:Math.random()*window.innerHeight});
-        },i*80);
-    }
+    for(let i=0;i<12;i++){setTimeout(()=>{spawnHireMe({clientX:Math.random()*window.innerWidth,clientY:Math.random()*window.innerHeight});},i*80);}
     playBeep();
-
-    // Notify via Make.com webhook
-    fetch('https://hook.us2.make.com/u6teffglcqjl8vo2r27ckre1yobmsrkk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            event: 'CANDIDATE_ACQUIRED',
-            timestamp: new Date().toISOString(),
-            message: 'Someone clicked HIRED on your portfolio. Get ready.',
-            source: window.location.href,
-            user_agent: navigator.userAgent
-        })
-    }).catch(()=>{}); // silent fail, don't break the UX
-
-    setTimeout(()=>{
-        document.getElementById('hired-final').style.display='flex';
-        copyEmail();
-    },500);
+    fetch('https://hook.us2.make.com/u6teffglcqjl8vo2r27ckre1yobmsrkk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'CANDIDATE_ACQUIRED',timestamp:new Date().toISOString(),message:'Someone clicked HIRED on your portfolio. Get ready.',source:window.location.href,user_agent:navigator.userAgent})}).catch(()=>{});
+    setTimeout(()=>{document.getElementById('hired-final').style.display='flex';copyEmail();},500);
 }
-
 function handleResume(){playClick();alert("PERSONNEL_DATA_LOCKED\nDecryption key: josiahanota03@gmail.com\n\nOr type 'email' in the terminal.");}
-
 </script>
 </body>
 </html>
